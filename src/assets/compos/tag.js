@@ -14,8 +14,8 @@ Vue.component("tag-compo", {
     },
   },
   template: `<div class="tag">
-                <input class="form-check-input" type="checkbox" {{checked?'checked':''}}/>
+                <input class="form-check-input" type="checkbox"/>
                 <span class="tag-name">{{label}}</span>
                 <span class="count">{{count}}</span>
-          </div>`,
+          </div>`
 });

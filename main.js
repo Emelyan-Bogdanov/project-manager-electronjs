@@ -18,6 +18,6 @@ app.on('window-all-closed', () => {
 
 
 // do something before closing the window
-app.on("before-quit",()=>{ 
-    
-})
+app.on("before-quit",()=>{
+
+});

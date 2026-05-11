@@ -6,69 +6,46 @@
     <link rel="stylesheet" href="../assets/css/all.css" />
     <link rel="stylesheet" href="../assets/css/index.css" />
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
+
+    <!-- vuejs -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- compos -->
+    <script src="../assets/compos/tag.js"></script>
+    <script src="../assets/compos/project-card.js"></script>
   </head>
   <body>
-    <div class="app">
+    <div class="app" id="app">
       <!-- left profile side -->
       <div class="left-side-profile">
         <div class="profile">
           <img src="../assets/imgs/icon.png" />
         </div>
         <h1>User name</h1>
-        <hr>
+        <hr />
         <div class="tags">
-          <div class="tag">
-            <input class="form-check-input" type="checkbox">
-            <span class="tag-name">Work</span>
-            <span class="count">12</span>
-          </div>
-          <button class="tag">Tag</button>
-          <button class="tag">Tag</button>
-          <button class="tag">Tag</button>
-          <button class="tag">Tag</button>
-          <button class="tag">Tag</button>
-          <button class="tag">Tag</button>
-          <button class="tag">Workspacess</button>
+          <tag-compo :count="11" label="Working"></tag-compo>
+          <tag-compo :count="11" label="Working"></tag-compo>
+          <tag-compo :count="11" label="Working"></tag-compo>
         </div>
       </div>
-
       <!-- list of projects  -->
       <div class="right-side-projects">
         <div class="project-controls">
-          <input type="text" name="" id="" >
+          <input type="text" name="" id="" />
           <button class="search">
-            <img src="../assets/imgs/search.png" alt="">
+            <img src="../assets/imgs/search.png" alt="" />
           </button>
         </div>
-        <div class="project">
-          <!-- left = logo du projet -->
-          <div class="project-logo">
-            <div class="logo">
-              <img src="../assets/imgs/icon.png" alt="" />
-            </div>
-          </div>
 
-          <!-- right = tous les autres infos -->
-          <div class="infos">
-            <div class="project-name">
-              <h2>Prooject number°1 test test test for overflow ellipsise</h2>
-            </div>
-            <div class="project-tags">
-              <!-- the 'ul' of the tags is scrollable -->
-              <div class="tag">Work</div>
-            </div>
-            <div class="description">
-              <p>
-                Lorem ipsum dolor, sit amet consectetur adipisicing elit. Earum,
-                aspernatur. Aliquid deleniti impedit, quisquam, velit ad ut
-                reiciendis provident voluptatem sapiente optio recusandae, est
-                necessitatibus autem dolores quos quibusdam? Amet!
-              </p>
-            </div>
-            <div class="owner">Created by :</div>
-          </div>
-        </div>
+        <project-card :tags="['Work','attack','test']" ></project-card>
+        <project-card></project-card>
       </div>
     </div>
+    <script>
+      let myapp = new Vue({
+        el: "#app" /* this sould have the selector of the root element */,
+        data: {},
+      });
+    </script>
   </body>
 </html>
