@@ -1,33 +1,38 @@
-
-
 body {
-    display: flex;
-    justify-content: center;
-    /* padding: 10px 20px; */
-    overflow: hidden;
+    margin: 0;
+    padding: 0;
     font-family: cairo-light;
+    height: 100vh;
+}
+
+.app {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    align-items: stretch;
 }
 
 .left-side-profile {
-    background-color: #3B7597 ;
-    flex-grow: 2;
-    max-width: 300px;
+    background-color: #3B7597;
+    flex: 0 0 300px;
+    height: 100%;
     /* elements customize */
     display: flex;
     flex-direction: column;
     align-items: center;
     padding: 10px;
-}
-.left-side-profile > * {
-    margin-block : 7px;
+    overflow-y: auto;
 }
 
+.left-side-profile > * {
+    margin-block: 7px;
+}
 
 .left-side-profile .profile {
     width: 200px;
     height: 200px;
     outline: solid 1px;
-    padding: 5xp;
+    padding: 5px;
     
     /* elements inside */
     display: flex;
@@ -36,54 +41,54 @@ body {
 
     /* image rounded inside */
     border-radius: 50%;
-    overflow: hidden; /*  to hide the image if overflowed */
+    overflow: hidden;
 }
-
 
 .left-side-profile .profile img {
     width: 150px;
 }
 
-
-
-
 /* right side with list of projects */
 .right-side-projects {
     background-color: #6FD1D7;
-    flex-grow: 1;
+    flex: 1;
     padding: 20px;
     
-    /*  */
     display: flex;
     flex-direction: column;
-    align-items: center; /* align to center horisontal */
-
+    align-items: center;
+    overflow-y: auto;
 }
+
 .right-side-projects > .project {
     outline: solid 1px;
     padding: 8px;
     margin-block: 5px;
+    width: 100%;
+    /* max-width: 800px; */
+    /* flex-grow: 1; */
     
     /* elements ui */
     display: flex;
-    align-items: center; /* vertically */
+    align-items: flex-start;
 }
 
 .right-side-projects > .project > * {
     margin-inline: 5px;
 }
 
-
 .right-side-projects > .project .project-logo {
     outline: solid 1px;
     padding: 2px;
     
-    width: 200px;
-    height: 100%;
+    width: 120px;
+    height: auto;
+    flex-shrink: 0;
     
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
 }
 
 /* contains the image of the project */
@@ -91,15 +96,77 @@ body {
     width: 100px;
     height: 100px;
     
-    /*  */
     display: flex;
     align-items: center;
     justify-content: center;
-
     overflow: hidden;
 }
 
+/* the image of the project logo */
 .right-side-projects > .project .project-logo > .logo > img {
     width: 100px;
     height: 100px;
+}
+
+/* infos side */
+.right-side-projects > .project .infos {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    width: 100%;
+    min-width: 0;
+}
+
+.right-side-projects > .project .infos > * {
+    margin-block: 7px;
+    outline: solid 1px;
+    padding: 3px;
+}
+
+/* project name with ellipsis */
+.right-side-projects > .project .infos .project-name h2 {
+    margin: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* project tags */
+.right-side-projects > .project .infos .project-tags {
+    background-color: #093C5D;
+    color: #6FD1D7;
+    height: 50px;
+    padding: 5px 7px;
+    
+    display: flex;
+    align-items: center;
+    overflow-x: auto;
+    gap: 5px;
+}
+
+/* tag of the project */
+.right-side-projects > .project .infos .project-tags .tag {
+    padding: 5px 10px;
+    width: fit-content;
+    height: fit-content;
+    border-radius: 7px;
+    background-color: #3B7597;
+    white-space: nowrap;
+    flex-shrink: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* description text truncation */
+.right-side-projects > .project .infos .description {
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+
+.right-side-projects > .project .infos .description p {
+    margin: 0;
 }
