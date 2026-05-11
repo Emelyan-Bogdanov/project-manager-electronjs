@@ -1,0 +1,105 @@
+
+
+body {
+    display: flex;
+    justify-content: center;
+    /* padding: 10px 20px; */
+    overflow: hidden;
+    font-family: cairo-light;
+}
+
+.left-side-profile {
+    background-color: #3B7597 ;
+    flex-grow: 2;
+    max-width: 300px;
+    /* elements customize */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+}
+.left-side-profile > * {
+    margin-block : 7px;
+}
+
+
+.left-side-profile .profile {
+    width: 200px;
+    height: 200px;
+    outline: solid 1px;
+    padding: 5xp;
+    
+    /* elements inside */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    /* image rounded inside */
+    border-radius: 50%;
+    overflow: hidden; /*  to hide the image if overflowed */
+}
+
+
+.left-side-profile .profile img {
+    width: 150px;
+}
+
+
+
+
+/* right side with list of projects */
+.right-side-projects {
+    background-color: #6FD1D7;
+    flex-grow: 1;
+    padding: 20px;
+    
+    /*  */
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* align to center horisontal */
+
+}
+.right-side-projects > .project {
+    outline: solid 1px;
+    padding: 8px;
+    margin-block: 5px;
+    
+    /* elements ui */
+    display: flex;
+    align-items: center; /* vertically */
+}
+
+.right-side-projects > .project > * {
+    margin-inline: 5px;
+}
+
+
+.right-side-projects > .project .project-logo {
+    outline: solid 1px;
+    padding: 2px;
+    
+    width: 200px;
+    height: 100%;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* contains the image of the project */
+.right-side-projects > .project .project-logo > .logo {
+    width: 100px;
+    height: 100px;
+    
+    /*  */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    overflow: hidden;
+}
+
+.right-side-projects > .project .project-logo > .logo > img {
+    width: 100px;
+    height: 100px;
+}

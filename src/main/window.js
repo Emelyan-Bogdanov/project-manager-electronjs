@@ -1,11 +1,12 @@
 
 
-const { app, BrowserWindow } = require('electron');
+const { BrowserWindow } = require('electron');
 
-function createWindow() {
+// main window
+function MainApp() {
   const win = new BrowserWindow({
     width: 1024,
-    height: 800,
+    height: 500,
     // movable: false, // position fixe 
     icon: '../assets/imgs/icon.png',
     title: "Gestionnaire de projets",
@@ -14,13 +15,15 @@ function createWindow() {
 
   });
 
-  win.loadFile('../templates/main.html');
-}
+    win.loadFile("./window.js")
+    win.loadFile('src/templates/index.html');
 
+//   win.loadFile('src/templates/main.html');
+}
 
 
 
 // exports everything if want to import from outside
 module.exports = {
-  createWindow
+  MainApp
 };
