@@ -7,10 +7,13 @@ function MainApp() {
   const win = new BrowserWindow({
     width: 1024,
     height: 500,
+    minWidth : 850,
+    minHeight : 450,
     // movable: false, // position fixe 
     icon: '../assets/imgs/icon.png',
     title: "Gestionnaire de projets",
     center : true,
+
     // frame:false // remove top bar buttons [minimize,fullscreen,close]
 
   });
