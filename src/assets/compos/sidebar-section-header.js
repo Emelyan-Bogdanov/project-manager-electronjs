@@ -18,7 +18,7 @@ Vue.component("sidebar-section-header", {
   template: `
   <div class="section-header">
         <div class="sidebar-title mb-0">{{title}}</div>
-        <div class="plus-btn" v-if="hasPlus">
+        <div class="plus-btn clicked" v-if="hasPlus">
             <i class="bi bi-plus"></i>
         </div>
     </div>`,

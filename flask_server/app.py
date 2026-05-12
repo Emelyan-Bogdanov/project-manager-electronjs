@@ -10,23 +10,15 @@ def create_app() :
 
     with app.app_context() :
         db.create_all()
-        # # create admin
-        # from .modules import User
-        # db.session.add(User(username="ibrahim",password="ahmed",email="ibrahim@admin.com"))
-        # db.session.commit()
+        from .modules import User , Task , Comment ,Workspace
+        import random
+        for i in range(20):
+            user = User(username=f"user_{random.randint(999,99999999)}" , email=f"email_{random.randint(999,99999999)}",password=f"1234{i}")
+            db.session.add(user)
+            db.session.commit()
 
     # ======= routes =========
-    @app.route("/users")
-    def allUsers():
-        from flask import jsonify
-        # get all users
-        from .modules import User
-        users = User.query.all()
-        
-        return jsonify([{
-            "id" : user.id,
-            "username":f"{user.username}",
-            "email" : user.email,
-            # "password" : user.password
-        } for user in users])        
+    from .routes import main_bp
+    app.register_blueprint(main_bp)
+    
     return app

@@ -1,4 +1,4 @@
-  Vue.component("project-card", {
+Vue.component("project-card", {
   name: "project-card",
   props: {
     tags: {
@@ -32,18 +32,18 @@
       type: String,
       default: "12 Feb",
     },
-    thumbnail : {
-      type:String,
-      default:""
+    thumbnail: {
+      type: String,
+      default: "",
     },
-    urls : {
-      type : Array ,
-      default : () => [
+    urls: {
+      type: Array,
+      default: () => [
         "https://i.pravatar.cc/100?img=4",
         "https://i.pravatar.cc/100?img=2",
-        "https://i.pravatar.cc/100?img=1"
-      ]
-    }
+        "https://i.pravatar.cc/100?img=1",
+      ],
+    },
   },
   data: function () {
     return {

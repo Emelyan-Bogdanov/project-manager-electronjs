@@ -1,5 +1,5 @@
 <!doctype html>
-<html>
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <title>Gestionnaire de projets</title>
@@ -13,6 +13,10 @@
     <!-- compos -->
     <script src="../assets/compos/tag.js"></script>
     <script src="../assets/compos/project-card.js"></script>
+    <script src="../assets/compos/menu-button.js"></script>
+    <script src="../assets/compos/sidebar-section-header.js"></script>
+    <script src="../assets/compos/sidebar-member-item.js"></script>
+    <script src="../assets/compos/column-title.js"></script>
 
     <!-- Icons -->
     <link
@@ -21,31 +25,146 @@
     />
   </head>
   <body>
-    <div class="app" id="app">
-      <!-- left profile side -->
-      <div class="left-side-profile">
-        <div class="profile">
-          <img src="../assets/imgs/icon.png" />
+    <div class="dashboard-wrapper d-flex" id="app">
+      <!-- sidebar  -->
+      <aside class="sidebar">
+        <div>
+          <div class="logo">
+            <div class="logo-circle"></div>
+            <h5 class="mb-0">TeamUnity</h5>
+          </div>
+
+          <!-- MENU -->
+          <div class="sidebar-title">Menu</div>
+
+          <side-menu-button
+            biclass="bi-house-fill"
+            count="13"
+            span-text="kkkkkkkkkk"
+          >
+          </side-menu-button>
+
+          <side-menu-button biclass="bi-check2-square"> </side-menu-button>
+
+          <side-menu-button biclass="bi-check2-square" span-text="Tasks">
+          </side-menu-button>
+
+          <side-menu-button biclass="bi-chat-dots" span-text="Tasks">
+          </side-menu-button>
+
+          <!-- PROJECTS -->
+
+          <sidebar-section-header :has-plus="false"></sidebar-section-header>
+
+          <div class="tools">
+            <side-menu-button
+              biclass="bi-stack"
+              span-text="Publications"
+            ></side-menu-button>
+            <side-menu-button
+              biclass="bi-stack"
+              span-text="Publications"
+            ></side-menu-button>
+
+            <side-menu-button
+              biclass="bi-calendar2-week"
+              span-text="Planning"
+            ></side-menu-button>
+          </div>
+
+          <!-- MEMBERS -->
+          <sidebar-section-header title="Membres de projet">
+          </sidebar-section-header>
+
+          <div class="members">
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+          </div>
         </div>
-        <h1 id="myprofile" class="clicked">User name</h1>
-        <hr />
-        <div class="tags">
-          <tag-compo :count="101" label="Working"></tag-compo>
-          <tag-compo :count="11" label="Working"></tag-compo>
-          <tag-compo :count="11" label="Working"></tag-compo>
+      </aside>
+
+      <!-- =========================
+          MAIN CONTENT
+    ========================== -->
+
+      <main class="main-content">
+        <!-- TOPBAR -->
+        <div class="topbar">
+          <div class="topbar-left">
+            <!-- <h3 class="mb-0">Publications</h3> -->
+            <button class="new-task clicked">+ Nouveau tâche</button>
+          </div>
         </div>
-      </div>
-      <!-- list of projects  -->
-      <div class="right-side-projects">
-        <project-card :tags="['Work','attack','test',]"></project-card>
-        <project-card></project-card>
-      </div>
+        <!-- SEARCH -->
+        <div class="search-row">
+          <div class="search-box">
+            <i class="bi bi-search"></i>
+            <input type="text" placeholder="trouver des tâches..." />
+          </div>
+          <div class="filters">
+            <span class="clicked"><i class="bi bi-funnel"></i> Sort by</span>
+            <span class="clicked"><i class="bi bi-sliders"></i> Filters</span>
+            <span class="clicked"><i class="bi bi-eye "></i> Show</span>
+          </div>
+        </div>
+
+        
+
+        <!-- BOARD -->
+        <div class="board">
+          <!-- COLUMN -->
+          <div class="board-column">
+            <column-title text="Category 1"></column-title>
+
+            <project-card> </project-card>
+            <project-card> </project-card>
+            <project-card> </project-card>
+            <project-card> </project-card>
+            <project-card> </project-card>
+          </div>
+
+          <!-- COLUMN -->
+          <div class="board-column">
+            <column-title text="Category 2"></column-title>
+
+            <project-card
+              title="title of the project card"
+              description="this is a description of the tassk"
+              views="50"
+              comments-count="55"
+            >
+            </project-card>
+            <project-card></project-card>
+            <project-card></project-card>
+            <project-card></project-card>
+          </div>
+
+          <!-- COLUMN -->
+          <div class="board-column">
+            <column-title text="Category 3"></column-title>
+
+            <project-card> </project-card>
+          </div>
+        </div>
+      </main>
     </div>
+    <!-- create compos -->
     <script>
       let myapp = new Vue({
         el: "#app" /* this sould have the selector of the root element */,
         data: {},
       });
+    </script>
+    <script>
+      setTimeout(() => {
+        document.location.reload();
+      }, 58500);
     </script>
   </body>
 </html>
