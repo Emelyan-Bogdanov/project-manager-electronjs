@@ -22,6 +22,16 @@ Vue.component("project-card", {
       type: String,
       default: "../assets/imgs/projet-default.png",
     },
+    views: {
+      default: 99,
+    },
+    commentsCount: {
+      default: 99,
+    },
+    deadline: {
+      type: String,
+      default: "12 Feb",
+    },
   },
   data: function () {
     return {
@@ -30,25 +40,34 @@ Vue.component("project-card", {
   },
   methods: {},
   template: `
-<div class="project">
-  <!-- left = logo du projet -->
-  <div class="project-logo">
-    <div class="logo">
-      <img :src="image" alt="" />
-    </div>
-  </div>
+        <div class="task-card">
+              <div class="tags">
+                <span class="tag tag-orange" v-for="tag in tags">{{tag}}</span>
+              </div>
 
-  <div class="infos">
-    <div class="project-name">
-      <h2>{{ title }}</h2>
-    </div>
-    <div class="project-tags">
-      <!-- the 'ul' of the tags is scrollable -->
-      <div class="tag clicked" v-for="tag in tags" :key="tag">{{ tag }}</div>
-    </div>
-    <div class="description"><p>{{ description }}</p></div>
-    <div class="owner">Created by :<a v-bind:href="'/author/' + author">  {{ author }} </a> </div>
-  </div>
-</div>
+              <div class="task-title">{{title}}</div>
+
+              <div class="task-text">
+                {{description}}
+              </div>
+
+              <div class="date-box">
+                <i class="bi bi-calendar3"></i>
+                {{deadline}}
+              </div>
+
+              <div class="card-footer-custom">
+                <div class="avatars">
+                <!-- to modify later -->
+                  <img src="https://i.pravatar.cc/100?img=4" />
+                  <img src="https://i.pravatar.cc/100?img=4" />
+                  <img src="https://i.pravatar.cc/100?img=4" />
+                </div>
+
+                <div class="text-secondary small">
+                  <i class="bi bi-chat"></i> {{commentsCount}}
+                </div>
+              </div>
+            </div>
 `,
 });
