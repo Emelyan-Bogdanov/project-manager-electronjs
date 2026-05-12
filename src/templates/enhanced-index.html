@@ -26,7 +26,7 @@
   </head>
   <body>
     <div class="dashboard-wrapper d-flex" id="app">
-     <!-- sidebar  -->
+      <!-- sidebar  -->
       <aside class="sidebar">
         <div>
           <div class="logo">
@@ -54,21 +54,23 @@
 
           <!-- PROJECTS -->
 
-          <sidebar-section-header></sidebar-section-header>
+          <sidebar-section-header :has-plus="false"></sidebar-section-header>
 
-          <side-menu-button
-            biclass="bi-stack"
-            span-text="Publications"
-          ></side-menu-button>
+          <div class="tools">
+            <side-menu-button
+              biclass="bi-stack"
+              span-text="Publications"
+            ></side-menu-button>
+            <side-menu-button
+              biclass="bi-stack"
+              span-text="Publications"
+            ></side-menu-button>
 
-          <side-menu-button
-            biclass="bi-calendar2-week"
-            span-text="Planning"
-          ></side-menu-button>
-
-          <side-menu-button span-text="Design Internal"></side-menu-button>
-
-          <side-menu-button span-text="ddddd"></side-menu-button>
+            <side-menu-button
+              biclass="bi-calendar2-week"
+              span-text="Planning"
+            ></side-menu-button>
+          </div>
 
           <!-- MEMBERS -->
           <sidebar-section-header title="Membres de projet">
@@ -161,7 +163,7 @@
     <script>
       setTimeout(() => {
         document.location.reload();
-      }, 40000);
+      }, 58500);
     </script>
   </body>
 </html>
