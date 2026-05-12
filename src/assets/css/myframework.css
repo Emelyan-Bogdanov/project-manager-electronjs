@@ -370,13 +370,13 @@ div:has(.tools) .tools {
     min-height: 155px;
 }
 
-.search-row , .topbar button {
+.search-row , .topbar-left {
     position: sticky;
 }
 .search-row {
     top : 0;
 }
-.topbar button{
+.topbar-left button{
     top : 70px;
 }
 .topbar h3 {
