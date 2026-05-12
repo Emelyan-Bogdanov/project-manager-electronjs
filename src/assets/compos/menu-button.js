@@ -6,20 +6,29 @@ Vue.component("side-menu-button", {
       default: "bi-check2-square",
     },
     spanText: {
-        type:String,
+      type: String,
       default: "default value",
     },
     count: {
       default: 99,
+    },
+    url: {
+      type: String,
+      default: "",
     },
   },
   data: function () {
     // unlike app , the compo's data has to be a function
     return {};
   },
-  methods: {},
-  template: `
-  <a href="#" class="menu-link">
+  methods: {
+    gotourl: function () {
+      if (this.url !== "") {
+        window.location.href = "allUsers.html";
+      }
+    },
+  },
+  template: `<a href="#" class="menu-link" @click='gotourl()'>
         <div class="menu-left">
             <i :class="'bi ' + biclass"></i>
             <span>{{spanText}}</span>

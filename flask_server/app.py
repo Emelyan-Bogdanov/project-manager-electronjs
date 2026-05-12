@@ -1,7 +1,8 @@
 from flask import Flask
 from .modules import db
+from flask_cors import CORS
 
-
+# Enable CORS for all routes and specify allowed origins
 
 def create_app() :
     app = Flask(__name__)
@@ -20,5 +21,6 @@ def create_app() :
     # ======= routes =========
     from .routes import main_bp
     app.register_blueprint(main_bp)
+    # CORS(app, resources={r"/*": {"origins": "http://127.0.0.1:5500"}})
     
     return app

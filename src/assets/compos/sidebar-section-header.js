@@ -5,10 +5,10 @@ Vue.component("sidebar-section-header", {
     title: {
       default: "Default value",
     },
-    hasPlus:{
-      type:Boolean,
-      default:true
-    }
+    hasPlus: {
+      type: Boolean,
+      default: true,
+    },
   },
   data: function () {
     // unlike app , the compo's data has to be a function

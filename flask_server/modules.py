@@ -32,7 +32,7 @@ class Workspace(db.Model) :
            db.session.commit()
 
 
-class Task(db.Model) :
+class Task(db.Model) : 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250),nullable=False)
     """ tags are arrays , but stored as json dumped """

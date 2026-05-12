@@ -1,11 +1,82 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Users UI</title>
+
+    <!-- Bootstrap -->
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+
+    <!-- Bootstrap Icons -->
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <!-- external css customised  -->
+    <link rel="stylesheet" href="../assets/css/users.css" />
+
+    <!-- Vuejs -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="../assets/compos/user-card.js"></script>
+  </head>
+  <body>
+    <div class="page-container" id="app">
+      <h1 class="page-title">Users</h1>
+
+      <!-- Search -->
+      <div class="search-box">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Search users" id="searchInput" />
+      </div>
+
+      <!-- Users Grid -->
+      <div class="row g-4" id="usersContainer">
+        <user-card-item></user-card-item>
+        <user-card-item></user-card-item>
+        <user-card-item></user-card-item>
+      </div>
+    </div>
+
+    <!-- perfect to search for a user -->
+    <script>
+      const searchInput = document.getElementById("searchInput");
+      const users = document.querySelectorAll(".user-item");
+
+      searchInput.addEventListener("keyup", function () {
+        const value = this.value.toLowerCase();
+
+        users.forEach((user) => {
+          const text = user.innerText.toLowerCase();
+
+          if (text.includes(value)) {
+            user.style.display = "block";
+          } else {
+            user.style.display = "none";
+          }
+        });
+      });
+    </script>
+    <script>
+      let myapp = new Vue({
+        el: "#app" /* this sould have the selector of the root element */,
+        data: {},
+      });
+    </script>
+    <script>
+      // get all users
+
+      fetch("http://127.0.0.1:8080/users")
+        .then((response) => response.text())
+        .then((data) => {
+          console.log(data);
+        })
+        .catch((error) => {
+          console.log(`ERROR : ${error}`);
+        });
+    </script>
+  </body>
 </html>
