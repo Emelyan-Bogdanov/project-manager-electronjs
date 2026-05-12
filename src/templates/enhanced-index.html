@@ -16,6 +16,7 @@
     <script src="../assets/compos/menu-button.js"></script>
     <script src="../assets/compos/sidebar-section-header.js"></script>
     <script src="../assets/compos/sidebar-member-item.js"></script>
+    <script src="../assets/compos/column-title.js"></script>
 
     <!-- Icons -->
     <link
@@ -25,10 +26,7 @@
   </head>
   <body>
     <div class="dashboard-wrapper d-flex" id="app">
-      <!-- =========================
-          SIDEBAR
-    ========================== -->
-
+     <!-- sidebar  -->
       <aside class="sidebar">
         <div>
           <div class="logo">
@@ -76,10 +74,16 @@
           <sidebar-section-header title="Membres de projet">
           </sidebar-section-header>
 
-          <sidebar-member-item></sidebar-member-item>
-          <sidebar-member-item></sidebar-member-item>
-          <sidebar-member-item></sidebar-member-item>
-          <sidebar-member-item></sidebar-member-item>
+          <div class="members">
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+            <sidebar-member-item></sidebar-member-item>
+          </div>
         </div>
       </aside>
 
@@ -105,7 +109,6 @@
         <div class="topbar">
           <div class="topbar-left">
             <h3 class="mb-0">Publications</h3>
-
             <button class="view-btn clicked">+ Nouveau tâche</button>
           </div>
         </div>
@@ -114,17 +117,18 @@
         <div class="board">
           <!-- COLUMN -->
           <div class="board-column">
-            <div class="column-title">
-              To Do <span class="text-secondary fs-5">(12)</span>
-            </div>
+            <column-title text="Category 1"></column-title>
+
+            <project-card> </project-card>
+            <project-card> </project-card>
+            <project-card> </project-card>
+            <project-card> </project-card>
             <project-card> </project-card>
           </div>
 
           <!-- COLUMN -->
           <div class="board-column">
-            <div class="column-title">
-              In Progress <span class="text-secondary fs-5">(2)</span>
-            </div>
+            <column-title text="Category 2"></column-title>
 
             <project-card
               title="title of the project card"
@@ -133,13 +137,14 @@
               comments-count="55"
             >
             </project-card>
+            <project-card></project-card>
+            <project-card></project-card>
+            <project-card></project-card>
           </div>
 
           <!-- COLUMN -->
           <div class="board-column">
-            <div class="column-title">
-              Review <span class="text-secondary fs-5">(3)</span>
-            </div>
+            <column-title text="Category 3"></column-title>
 
             <project-card> </project-card>
           </div>
@@ -156,7 +161,7 @@
     <script>
       setTimeout(() => {
         document.location.reload();
-      }, 2000);
+      }, 40000);
     </script>
   </body>
 </html>

@@ -36,7 +36,7 @@ body {
   background: #f7f7f7;
   padding: 5px 10px;
   overflow: hidden;
-  min-height: 90vh;
+  max-height: 100%;
 }
 
 /* =========================
@@ -44,18 +44,23 @@ body {
     ========================== */
 
 .sidebar {
-  width: 270px;
-  background: linear-gradient(180deg, #171922, #111318);
+    width: 270px;
+    background: linear-gradient(180deg, #171922, #111318);
   color: white;
-  min-height: 90vh;
+  /* max-height: 90vh; */
   padding: 28px 22px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
 }
 
+.sidebar  > div {
+    max-height: 100%;
+}
+
+
 .logo {
-  display: flex;
+    display: flex;
   align-items: center;
   gap: 12px;
   margin-bottom: 35px;
@@ -351,4 +356,9 @@ body {
 
 .topbar .topbar-left h3 {
     flex-grow: 1;
+}
+
+
+div.members{
+    overflow-y : auto;
 }
