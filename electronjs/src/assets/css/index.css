@@ -1,0 +1,269 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: cairo-light;
+  height: 100vh;
+}
+* {
+  font-family: Cairo-light, sans-serif;
+}
+
+.app {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: stretch;
+}
+
+.left-side-profile {
+  background-color: #3b7597;
+  flex: 0 0 300px;
+  height: 100%;
+  /* elements customize */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 10px;
+  overflow-y: auto;
+  resize: both;
+}
+
+.left-side-profile > * {
+  margin-block: 7px;
+}
+
+.left-side-profile .profile {
+  width: 100px;
+  height: 100px;
+  /* outline: solid 1px; */
+  padding: 5px;
+
+  /* elements inside */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  /* image rounded inside */
+  overflow: hidden;
+}
+
+.left-side-profile .profile img {
+  width: 100px;
+  outline: solid 2px #35858e;
+  border-radius: 50%;
+}
+
+/* for the username */
+.left-side-profile h1 {
+  /* outline: solid 1px; */
+  font-family: "cairo-bold";
+  width: 100%;
+  text-align: center;
+}
+
+.left-side-profile hr {
+  outline: solid 1px;
+  width: 100%;
+}
+
+.left-side-profile .tags {
+  outline: solid 1px;
+  padding: 7px;
+  width: 100%;
+  flex-grow: 1;
+
+  /*  */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  /*  */
+  overflow: hidden;
+  overflow-y: auto;
+}
+
+.left-side-profile .tag {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  padding: 10px 14px;
+  margin-bottom: 10px;
+
+  background-color: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 10px;
+
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.tag:hover {
+  background-color: #eef2ff;
+  border-color: #6c63ff;
+}
+
+.tag .form-check-input {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+}
+
+.tag-name {
+  flex: 1;
+  font-size: 15px;
+  font-weight: 500;
+  color: #212529;
+}
+
+.count {
+  min-width: 32px;
+  text-align: center;
+  padding: 4px 8px;
+  font-size: 13px;
+  font-weight: 600;
+  background-color: #6c63ff;
+  color: white;
+  border-radius: 20px;
+}
+
+.left-side-profile .tag:active {
+  scale: 0.95 0.95;
+}
+
+/* to search for projects */
+.right-side-projects .project-controls {
+  width: 100%;
+  height: 50px;
+  /* outline: solid 1px; */
+
+  /*  */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* to search for projects */
+.right-side-projects .project-controls > * {
+  margin-inline: 3px;
+}
+
+/* top bar panel to search for projects */
+
+/* right side with list of projects */
+.right-side-projects {
+  background-color: #6fd1d7;
+  flex: 1;
+  padding: 20px;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  overflow-y: auto;
+}
+
+.right-side-projects > .project {
+  outline: solid 1px #333;
+  padding: 8px;
+  margin-block: 5px;
+  width: 100%;
+  background: #2fa084;
+  color: whitesmoke;
+
+  /* elements ui */
+  display: flex;
+  align-items: flex-start;
+}
+
+.right-side-projects > .project > * {
+  margin-inline: 5px;
+}
+
+.right-side-projects > .project .project-logo {
+  outline: solid 1px;
+  padding: 2px;
+
+  width: 120px;
+  height: auto;
+  flex-shrink: 0;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* contains the image of the project */
+.right-side-projects > .project .project-logo > .logo {
+  width: 100px;
+  height: 100px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+/* the image of the project logo */
+.right-side-projects > .project .project-logo > .logo > img {
+  width: 100px;
+  height: 100px;
+}
+
+/* infos side */
+.right-side-projects > .project .infos {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+}
+
+.right-side-projects > .project .infos > * {
+  /* margin-block: 7px; */
+  /* outline: solid 1px; */
+  padding: 3px;
+}
+
+/* project name with ellipsis */
+.right-side-projects > .project .infos .project-name h2 {
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* project tags */
+.right-side-projects > .project .infos .project-tags {
+  cursor: pointer;
+  color: white;
+  height: 50px;
+  padding: 5px 7px;
+  display: flex;
+  align-items: center;
+  overflow-x: auto;
+  gap: 5px;
+}
+
+/* tag of the project */
+.right-side-projects > .project .infos .project-tags .tag {
+  padding: 5px 10px;
+  width: fit-content;
+  height: fit-content;
+  border-radius: 7px;
+  background-color: #3b7597;
+  white-space: nowrap;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* description text truncation */
+.right-side-projects > .project .infos .description {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+}

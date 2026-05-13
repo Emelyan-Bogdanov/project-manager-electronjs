@@ -1,0 +1,57 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    user-select: none;
+}
+
+/* html , body {
+    width: 100%;
+    height: 100%;
+} */
+
+
+body {
+     line-height: 1.5;
+}
+
+/* define the font Cairo */
+@font-face {
+    font-family: 'cairo-light'; /*a name to be used later*/
+    src: url("../fonts/cairo/Cairo-Light.ttf"); /*URL to font*/
+}
+@font-face {
+    font-family: 'cairo-bold'; /*a name to be used later*/
+    src: url("../fonts/cairo/Cairo-Bold.ttf"); /*URL to font*/
+}
+@font-face {
+    font-family: 'cairo-black'; /*a name to be used later*/
+    src: url("../fonts/cairo/Cairo-Black.ttf"); /*URL to font*/
+}
+
+
+/* remove the ui default list style  */
+ul {
+    list-style: none;
+}
+
+
+/* remove the defaul input focus */
+input:focus {
+    outline: none;
+    border : none;
+}
+
+/* customize scrollbar */
+*::-webkit-scrollbar {
+    width: 0.2em;
+}
+
+*::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
+}
+
+* ::-webkit-scrollbar-thumb {
+  background-color: #56B6C6;
+  outline: 1px solid #56B6C6;
+}
