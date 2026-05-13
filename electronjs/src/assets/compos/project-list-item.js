@@ -1,6 +1,7 @@
 Vue.component("project-list-item", {
   name: "project-list-item",
   props: {
+    projectId: { default: null },
     name: { type: String, default: "Projet" },
     members: { default: 0 },
     tasks: { default: 0 },
@@ -8,8 +9,13 @@ Vue.component("project-list-item", {
     statusClass: { type: String, default: "status-progress" },
     color: { type: String, default: "#ff9838" },
   },
+  methods: {
+    onClick() {
+      this.$emit("select", this.projectId);
+    },
+  },
   template: `
-    <div class="project-item">
+    <div class="project-item" @click="onClick" style="cursor: pointer;">
       <div class="project-item-left">
         <div class="project-dot" :style="{ background: color }"></div>
         <div>

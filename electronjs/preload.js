@@ -4,6 +4,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getUsers: () => ipcRenderer.invoke('get-users'),
     getTasks: () => ipcRenderer.invoke('get-tasks'),
     getWorkspaces: () => ipcRenderer.invoke('get-workspaces'),
+    getWorkspace: (id) => ipcRenderer.invoke('get-workspace', id),
     getFiles: () => ipcRenderer.invoke('get-files'),
     deleteFile: (id) => ipcRenderer.invoke('delete-file', id),
     createUser: (data) => ipcRenderer.invoke('create-user', data),

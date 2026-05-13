@@ -73,13 +73,15 @@
             <div class="dash-card-body">
               <project-list-item
                 v-for="proj in recentProjects"
-                :key="proj.name"
+                :key="proj.id"
+                :project-id="proj.id"
                 :name="proj.name"
                 :members="proj.members"
                 :tasks="proj.tasks"
                 :status="proj.status"
                 :status-class="proj.statusClass"
                 :color="proj.color"
+                @select="goToProject"
               ></project-list-item>
             </div>
           </div>
@@ -92,8 +94,8 @@
             </div>
             <div class="dash-card-body">
               <activity-item
-                v-for="act in activities"
-                :key="act.text"
+                v-for="(act, i) in activities"
+                :key="i"
                 :avatar="act.avatar"
                 :user="act.user"
                 :action="act.action"
@@ -162,6 +164,7 @@
           ],
           recentProjects: [],
           activities: [],
+          activityLog: [],
           team: [],
           showModal: false,
           newProject: { name: "", description: "" },
@@ -186,6 +189,7 @@
               this.stats[3].count = files.length;
 
               this.recentProjects = workspaces.slice(0, 4).map((ws, i) => ({
+                id: ws.id,
                 name: ws.name,
                 members: 0,
                 tasks: 0,
@@ -201,12 +205,13 @@
                 online: i % 2 === 0,
               }));
 
-              this.activities = tasks.slice(0, 4).map(t => ({
+              const taskActivities = tasks.slice(0, 4).map(t => ({
                 user: "Syst\u00e8me",
                 action: `a cr\u00e9\u00e9 la t\u00e2che "${t.title}"`,
                 time: "r\u00e9cemment",
                 avatar: avatars[Math.floor(Math.random() * avatars.length)],
               }));
+              this.activities = [...this.activityLog, ...taskActivities].slice(0, 8);
             } catch (e) {
               console.error("Error loading stats:", e);
             }
@@ -228,6 +233,12 @@
                 this.projectError = result.error;
                 return;
               }
+              this.activityLog.unshift({
+                user: "Vous",
+                action: `a cr\u00e9\u00e9 le projet "${this.newProject.name}"`,
+                time: "\u00e0 l'instant",
+                avatar: avatars[0],
+              });
               this.showModal = false;
               await this.loadStats();
             } catch (e) {
@@ -235,6 +246,11 @@
               console.error(e);
             } finally {
               this.projectLoading = false;
+            }
+          },
+          goToProject(id) {
+            if (id) {
+              window.electronAPI.navigate(`workspace.html?id=${id}`);
             }
           },
         },

@@ -47,7 +47,7 @@ Vue.component("left-big-menu", {
 
       <side-menu-button
         biclass="bi-check2-square"
-        span-text="T\u00e2ches"
+        span-text="Tâches"
         url="tasks.html"
       ></side-menu-button>
 
@@ -88,7 +88,7 @@ Vue.component("left-big-menu", {
         <a href="#" class="menu-link" @click.prevent="logout">
           <div class="menu-left">
             <i class="bi bi-box-arrow-left"></i>
-            <span>D\u00e9connexion</span>
+            <span>Déconnexion</span>
           </div>
         </a>
       </div>
