@@ -1,7 +1,23 @@
 from flask import Blueprint , jsonify
-
+from ..modules import User
 
 users_bp = Blueprint("users",__name__)
+
+
+@users_bp.route("/users")
+def allUsers():
+    # get all users
+    users = User.query.all()
+    
+    return jsonify([{
+        "id" : user.id,
+        "username":f"{user.username}",
+        "email" : user.email,
+        # "password" : user.password
+    } for user in users])        
+    
+
+
 
 # how many users are in the app
 @users_bp.route("/howmanyusers")
