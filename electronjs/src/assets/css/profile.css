@@ -66,21 +66,6 @@ body {
   margin-right: 4px;
 }
 
-.edit-profile-btn {
-  background: #f0f0f0;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 12px;
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.edit-profile-btn:hover {
-  background: #e0e0e0;
-}
-
 .profile-body {
   background: white;
   border-radius: 16px;
@@ -108,41 +93,6 @@ body {
   color: #555;
   line-height: 1.6;
   margin: 0;
-}
-
-.skill-tags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.skill-tag {
-  background: #fff0dd;
-  color: #ff9838;
-  padding: 6px 14px;
-  border-radius: 20px;
-  font-size: 13px;
-  font-weight: 500;
-}
-
-.profile-activity .activity-item.icon-activity {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 0;
-  border-bottom: 1px solid #f0f0f0;
-  font-size: 14px;
-}
-
-.profile-activity .activity-item.icon-activity:last-child {
-  border-bottom: none;
-}
-
-.profile-activity .activity-item.icon-activity i {
-  color: #ff9838;
-  font-size: 16px;
-  width: 20px;
-  text-align: center;
 }
 
 .profile-activity .activity-item.icon-activity .activity-time {

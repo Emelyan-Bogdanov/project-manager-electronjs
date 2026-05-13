@@ -1,4 +1,3 @@
-// create the component
 Vue.component("tag-compo", {
   name: "tag-compo",
   props: {
@@ -11,30 +10,19 @@ Vue.component("tag-compo", {
     },
     label: {
       type: String,
-      default: "Test Tag",
-    },
-    checked: {
-      type: Boolean,
-      default: false,
+      default: "Tag",
     },
   },
   data: function () {
-    // unlike app , the compo's data has to be a function
     return {};
   },
   methods: {
-    check: function () {
-      this.checked = !this.checked;
-    },
     clicked: function () {
-      console.log(
-        `Clicked tag with label : ${this.label} and count ${this.count}`,
-      );
+      this.$emit("toggle", this.label);
     },
   },
-  template: `<div class="tag" @click='clicked'>
-                <input class="form-check-input" type="checkbox" v-if="checked"/>
-                <input class="form-check-input" type="checkbox" v-if="!checked"/>
+  template: `<div class="tag" @click="clicked">
+                <input class="form-check-input" type="checkbox" :checked="checked" @click.stop />
                 <span class="tag-name">{{label}}</span>
                 <span class="count">{{count}}</span>
           </div>`,

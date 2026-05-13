@@ -45,12 +45,6 @@ Vue.component("project-card", {
       ],
     },
   },
-  data: function () {
-    return {
-      // You can remove 'author', 'title', 'description', 'image' here if you handle defaults via props
-    };
-  },
-  methods: {},
   template: `
         <div class="task-card">
               <div class="tags">
@@ -70,8 +64,6 @@ Vue.component("project-card", {
 
               <div class="card-footer-custom">
                 <div class="avatars">
-                <!-- to modify later -->
-
                   <img v-for="url in urls" :src="url" />
                 </div>
 

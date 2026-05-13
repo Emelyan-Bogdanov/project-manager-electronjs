@@ -24,14 +24,7 @@
   "license": "ISC",
   "type": "commonjs",
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.6",
     "electron": "^42.0.1",
-    "electron-builder": "^26.8.1",
-    "vite": "^8.0.12"
-  },
-  "dependencies": {
-    "dotenv": "^17.4.2",
-    "electron-store": "^11.0.2",
-    "vue": "^3.5.34"
+    "electron-builder": "^26.8.1"
   }
 }
