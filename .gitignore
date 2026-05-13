@@ -104,6 +104,7 @@ dist
 # vitepress cache directory
 **/.vitepress/cache
 
+*.db
 # Docusaurus cache and generated files
 .docusaurus
 
