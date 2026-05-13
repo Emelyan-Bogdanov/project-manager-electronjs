@@ -33,6 +33,39 @@ class Workspace(db.Model) :
            db.session.add( Workspace(f"workspace_{i}" , f"description_{i}"))
            db.session.commit()
 
+    @staticmethod
+    def add_workspace(name, description, iconPath="[NO IMAGE]"):
+        workspace = Workspace(
+            name=name,
+            description=description,
+            iconPath=iconPath
+        )
+        db.session.add(workspace)
+        db.session.commit()
+        return workspace
+
+    @staticmethod
+    def get_workspace(workspace_id):
+        return Workspace.query.get(workspace_id)
+
+    @staticmethod
+    def update_workspace(workspace_id, **kwargs):
+        workspace = Workspace.query.get(workspace_id)
+        if workspace:
+            for key, value in kwargs.items():
+                if hasattr(workspace, key):
+                    setattr(workspace, key, value)
+            db.session.commit()
+        return workspace
+
+    @staticmethod
+    def delete_workspace(workspace_id):
+        workspace = Workspace.query.get(workspace_id)
+        if workspace:
+            db.session.delete(workspace)
+            db.session.commit()
+        return workspace
+
 
 class Task(db.Model) : 
     id = db.Column(db.Integer, primary_key=True)
