@@ -29,15 +29,10 @@ Vue.component("left-big-menu", {
           >
           </side-menu-button>
 
-          <side-menu-button biclass="bi-check2-square"> </side-menu-button>
-
           <side-menu-button 
             biclass="bi-check2-square" 
             span-text="Tâches"
             url="tasks.html">
-          </side-menu-button>
-
-          <side-menu-button biclass="bi-chat-dots" span-text="Tasks">
           </side-menu-button>
 
           <!-- PROJECTS -->

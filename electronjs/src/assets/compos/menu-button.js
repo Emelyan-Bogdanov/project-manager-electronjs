@@ -29,6 +29,8 @@ Vue.component("side-menu-button", {
     gotourl: function () {
       if (this.url) {
         window.location.href = this.url;
+      } else {
+        console.warn("Aucune URL définie pour ce bouton de menu");
       }
     },
   },
