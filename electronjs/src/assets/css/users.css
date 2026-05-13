@@ -39,74 +39,79 @@
 }
 
 .user-card {
-  background: #e0e0e0;
+  background: white;
   border-radius: 18px;
-  padding: 28px;
-  transition: 0.3s;
+  padding: 24px;
+  transition: all 0.25s ease;
   height: 100%;
-  border: 1px solid transparent;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  border: 1px solid #f0f0f0;
 }
 
 .user-card:hover {
-  transform: translateY(-4px);
-  border-color: #7f8cff;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  transform: translateY(-6px);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.08);
+  border-color: #ff9838;
 }
 
 .user-top {
   display: flex;
-  gap: 18px;
+  gap: 16px;
   align-items: center;
   margin-bottom: 18px;
 }
 
 .user-img {
-  width: 78px;
-  height: 78px;
+  width: 72px;
+  height: 72px;
   border-radius: 50%;
   object-fit: cover;
+  border: 3px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  flex-shrink: 0;
 }
 
 .user-name {
-  font-size: 28px;
+  font-size: 20px;
   font-weight: 700;
-  margin-bottom: 5px;
-  /* hide user name if long */
+  margin: 0 0 4px;
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  color: #1d2340;
+}
+
+.user-name p {
+  margin: 0;
 }
 
 .user-location {
-  color: #676d89;
-  font-size: 16px;
+  color: #7b7d85;
+  font-size: 14px;
+}
+
+.user-location i {
+  margin-right: 4px;
 }
 
 .tags {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 8px;
 }
 
 .tag {
-  border: 1px solid #bfc8ff;
-  color: #7280e0;
+  border: none;
+  color: #ff9838;
   padding: 4px 12px;
-  border-radius: 30px;
-  font-size: 14px;
-  background: #f8f9ff;
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  background: #fff0dd;
 }
 
 @media (max-width: 768px) {
-  .page-title {
-    font-size: 38px;
-  }
-
-  .search-box {
-    width: 100%;
-  }
-
   .user-name {
-    font-size: 22px;
+    font-size: 18px;
   }
 }

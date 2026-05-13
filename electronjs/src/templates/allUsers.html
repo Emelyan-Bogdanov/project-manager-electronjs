@@ -60,6 +60,7 @@
             :username="user.username"
             :tags="user.tags"
             :location="user.location"
+            :profile="user.avatar"
           ></user-card-item>
         </div>
       </main>
@@ -73,14 +74,14 @@
             searchQuery: "",
             loading: false,
             users: [
-              { username: "Alice Martin", tags: ["Design", "Frontend"], location: "Paris" },
-              { username: "Bob Dupont", tags: ["Backend", "DevOps"], location: "Lyon" },
-              { username: "Claire Bernard", tags: ["Design", "UI/UX"], location: "Marseille" },
-              { username: "David Petit", tags: ["Frontend", "Mobile"], location: "Toulouse" },
-              { username: "Emma Rousseau", tags: ["Backend", "API"], location: "Bordeaux" },
-              { username: "Fabien Moreau", tags: ["Fullstack", "React"], location: "Lille" },
-              { username: "Gaëlle Laurent", tags: ["DevOps", "Cloud"], location: "Nantes" },
-              { username: "Hugo Lefevre", tags: ["Mobile", "Flutter"], location: "Strasbourg" },
+              { username: "Alice Martin", tags: ["Design", "Frontend"], location: "Paris", avatar: "https://i.pravatar.cc/100?img=1" },
+              { username: "Bob Dupont", tags: ["Backend", "DevOps"], location: "Lyon", avatar: "https://i.pravatar.cc/100?img=2" },
+              { username: "Claire Bernard", tags: ["Design", "UI/UX"], location: "Marseille", avatar: "https://i.pravatar.cc/100?img=3" },
+              { username: "David Petit", tags: ["Frontend", "Mobile"], location: "Toulouse", avatar: "https://i.pravatar.cc/100?img=4" },
+              { username: "Emma Rousseau", tags: ["Backend", "API"], location: "Bordeaux", avatar: "https://i.pravatar.cc/100?img=5" },
+              { username: "Fabien Moreau", tags: ["Fullstack", "React"], location: "Lille", avatar: "https://i.pravatar.cc/100?img=6" },
+              { username: "Gaëlle Laurent", tags: ["DevOps", "Cloud"], location: "Nantes", avatar: "https://i.pravatar.cc/100?img=7" },
+              { username: "Hugo Lefevre", tags: ["Mobile", "Flutter"], location: "Strasbourg", avatar: "https://i.pravatar.cc/100?img=8" },
             ],
           };
         },
