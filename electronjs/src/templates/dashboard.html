@@ -17,7 +17,8 @@
     <script src="../assets/compos/sidebar-section-header.js"></script>
     <script src="../assets/compos/sidebar-member-item.js"></script>
     <script src="../assets/compos/column-title.js"></script>
-
+    <script src="../assets/compos/left-big-menu.js"></script>
+    
     <!-- Icons -->
     <link
       rel="stylesheet"
@@ -28,73 +29,12 @@
     <div class="dashboard-wrapper d-flex" id="app">
       <!-- sidebar  -->
       <aside class="sidebar">
-        <div>
-          <div class="logo">
-            <div class="logo-circle"></div>
-            <h5 class="mb-0">TeamUnity</h5>
-          </div>
-
-          <!-- MENU -->
-          <div class="sidebar-title">Menu</div>
-
-          <side-menu-button
-            biclass="bi-house-fill"
-            count="13"
-            span-text="kkkkkkkkkk"
-          >
-          </side-menu-button>
-
-          <side-menu-button biclass="bi-check2-square"> </side-menu-button>
-
-          <side-menu-button biclass="bi-check2-square" span-text="Tasks">
-          </side-menu-button>
-
-          <side-menu-button biclass="bi-chat-dots" span-text="Tasks">
-          </side-menu-button>
-
-          <!-- PROJECTS -->
-
-          <sidebar-section-header :has-plus="false"></sidebar-section-header>
-
-          <div class="tools">
-            <side-menu-button
-              biclass="bi-stack"
-              span-text="Publications"
-            ></side-menu-button>
-            <side-menu-button
-              biclass="bi-stack"
-              span-text="Publications"
-            ></side-menu-button>
-
-            <side-menu-button
-              biclass="bi-people"
-              span-text="Users"
-              url="allUsers.html"
-              counterId="nUser"
-            ></side-menu-button>
-          </div>
-
-          <!-- MEMBERS -->
-          <sidebar-section-header title="Membres de projet">
-          </sidebar-section-header>
-
-          <div class="members">
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-            <sidebar-member-item></sidebar-member-item>
-          </div>
-        </div>
+        <!-- left menu in everything -->
+        <left-big-menu>
+        </left-big-menu>
       </aside>
 
-      <!-- =========================
-          MAIN CONTENT
-    ========================== -->
-
+        <!-- right center main content -->
       <main class="main-content"></main>
     </div>
     <!-- create compos -->
@@ -104,23 +44,15 @@
         data: {
           userCount: 0,
         },
-
         mounted() {
-          fetch("http://127.0.0.1:8080/howmanyusers")
-            .then((response) => response.text())
-            .then((data) => {
-              this.userCount = data;
-            })
-            .catch((error) => {
-              console.error("Error fetching users:", error);
-            });
+          // executed when app is ready
         },
       });
     </script>
     <script>
       setTimeout(() => {
         document.location.reload();
-      }, 58500);
+      }, 5500);
     </script>
   </body>
 </html>

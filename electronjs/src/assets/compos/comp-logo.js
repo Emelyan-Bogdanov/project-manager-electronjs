@@ -15,6 +15,6 @@ Vue.component("company-logo", {
   template: `
     <div class="logo">
         <div class="logo-circle"></div>
-        <h5 class="mb-0">TeamUnity</h5>
+        <h5 class="mb-0">{{compName}}</h5>
     </div>`,
 });

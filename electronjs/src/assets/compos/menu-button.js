@@ -10,7 +10,7 @@ Vue.component("side-menu-button", {
       default: "default value",
     },
     count: {
-      default: 99,
+      default: 0,
     },
     url: {
       type: String,
