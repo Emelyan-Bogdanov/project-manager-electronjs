@@ -14,11 +14,13 @@ def create_app() :
         from .modules import User , Task , Comment ,Workspace
         
         # add synthetic data
-        import random
-        for i in range(20):
-            user = User(username=f"user_{random.randint(999,99999999)}" , email=f"email_{random.randint(999,99999999)}",password=f"1234{i}")
-            db.session.add(user)
-            db.session.commit()
+        print(__name__," : remove comment to add synthetic data ")
+        
+        # import random
+        # for i in range(20):
+        #     user = User(username=f"user_{random.randint(999,99999999)}" , email=f"email_{random.randint(999,99999999)}",password=f"1234{i}")
+        #     db.session.add(user)
+        #     db.session.commit()
 
     # ======= routes =========
     from .routes import main_bp , message_bp  , workspace_bp , task_bp , users_bp
