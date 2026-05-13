@@ -41,6 +41,11 @@ function MainApp() {
     return [{id: 1, title: 'Exemple de tâche'}];
   });
 
+  ipcMain.handle('get-messages', async () => {
+    // Implémentez ici la logique pour récupérer les messages
+    return [{id: 1, text: 'Exemple de message'}];
+  });
+
   win.on("closed", () => {
     win = null;
   });

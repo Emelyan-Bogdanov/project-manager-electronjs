@@ -45,7 +45,8 @@ class Task(db.Model) :
     authorId = db.Column(db.Integer)
     """ images paths are arrays , but stored as json dumped """
     images = db.Column(db.String(250) , default=""),
-    priority = db.Column(db.Integer, default=1)  # 1 = Low, 2 = Medium, 3 = High
+    priority = db.Column(db.Integer, default=1),  # 1 = Low, 2 = Medium, 3 = High
+    status = db.Column(db.String(50), default="todo")  # todo, in_progress, done
     
     @staticmethod
     def create_synthetic(db,count=5):
