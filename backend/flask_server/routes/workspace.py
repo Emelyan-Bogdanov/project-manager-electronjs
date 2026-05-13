@@ -25,13 +25,18 @@ def api_all_workspaces():
 
 @workspace_bp.route("/addworkspace", methods=["POST"])
 def add_workspace():
-    data = request.json
-    workspace = Workspace.add_workspace(
-        name=data.get("name"),
-        description=data.get("description"),
-        iconPath=data.get("iconPath", "[NO IMAGE]")
-    )
-    return jsonify({"id": workspace.id, "message": "Workspace added"})
+    try:
+        data = request.json
+        if not data or not data.get("name"):
+            return jsonify({"error": "Le nom du projet est requis"}), 400
+        workspace = Workspace.add_workspace(
+            name=data.get("name"),
+            description=data.get("description"),
+            iconPath=data.get("iconPath", "[NO IMAGE]")
+        )
+        return jsonify({"id": workspace.id, "message": "Workspace added"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @workspace_bp.route("/workspace/<int:workspace_id>")
 def workspace_info(workspace_id):
