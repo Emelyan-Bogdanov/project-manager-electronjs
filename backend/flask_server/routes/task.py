@@ -35,7 +35,7 @@ def add_task():
 def task_info(task_id):
     # try to find the task
     try :
-        task = Task.query.get(taskid)
+        task = Task.query.get(task_id)
         return {
             "id":task.id,
             "title":task.title,
