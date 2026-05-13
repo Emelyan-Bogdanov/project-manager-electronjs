@@ -44,7 +44,8 @@ class Task(db.Model) :
     deadline = db.Column(db.String(70) , nullable=False)
     authorId = db.Column(db.Integer)
     """ images paths are arrays , but stored as json dumped """
-    images = db.Column(db.String(250) , default="")
+    images = db.Column(db.String(250) , default=""),
+    priority = db.Column(db.Integer, default=1)  # 1 = Low, 2 = Medium, 3 = High
     
     @staticmethod
     def create_synthetic(db,count=5):

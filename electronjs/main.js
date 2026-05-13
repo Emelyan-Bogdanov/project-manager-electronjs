@@ -36,6 +36,11 @@ function MainApp() {
     win.loadFile("src/templates/allUsers.html");
   });
 
+  ipcMain.handle('get-tasks', async () => {
+    // Implémentez ici la logique pour récupérer les tâches
+    return [{id: 1, title: 'Exemple de tâche'}];
+  });
+
   win.on("closed", () => {
     win = null;
   });
