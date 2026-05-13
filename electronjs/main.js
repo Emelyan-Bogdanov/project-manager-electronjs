@@ -18,7 +18,7 @@ function MainApp() {
     center: true,
     webPreferences: {
       nodeIntegration: true,
-      contextIsolation: true, 
+      contextIsolation: true,
       enableRemoteModule: false,
       preload: path.join(__dirname, "preload.js"), // use a preload script
     },
