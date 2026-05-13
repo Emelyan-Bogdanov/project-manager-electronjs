@@ -67,22 +67,26 @@
     </div>
 
     <script>
+      const avatars = [
+        "https://i.pravatar.cc/100?img=1", "https://i.pravatar.cc/100?img=2",
+        "https://i.pravatar.cc/100?img=3", "https://i.pravatar.cc/100?img=4",
+        "https://i.pravatar.cc/100?img=5", "https://i.pravatar.cc/100?img=6",
+        "https://i.pravatar.cc/100?img=7", "https://i.pravatar.cc/100?img=8",
+      ];
+      const tagsPool = [
+        ["Design", "Frontend"], ["Backend", "DevOps"], ["Design", "UI/UX"],
+        ["Frontend", "Mobile"], ["Backend", "API"], ["Fullstack", "React"],
+        ["DevOps", "Cloud"], ["Mobile", "Flutter"],
+      ];
+      const locations = ["Paris", "Lyon", "Marseille", "Toulouse", "Bordeaux", "Lille", "Nantes", "Strasbourg"];
+
       new Vue({
         el: "#app",
         data() {
           return {
             searchQuery: "",
-            loading: false,
-            users: [
-              { username: "Alice Martin", tags: ["Design", "Frontend"], location: "Paris", avatar: "https://i.pravatar.cc/100?img=1" },
-              { username: "Bob Dupont", tags: ["Backend", "DevOps"], location: "Lyon", avatar: "https://i.pravatar.cc/100?img=2" },
-              { username: "Claire Bernard", tags: ["Design", "UI/UX"], location: "Marseille", avatar: "https://i.pravatar.cc/100?img=3" },
-              { username: "David Petit", tags: ["Frontend", "Mobile"], location: "Toulouse", avatar: "https://i.pravatar.cc/100?img=4" },
-              { username: "Emma Rousseau", tags: ["Backend", "API"], location: "Bordeaux", avatar: "https://i.pravatar.cc/100?img=5" },
-              { username: "Fabien Moreau", tags: ["Fullstack", "React"], location: "Lille", avatar: "https://i.pravatar.cc/100?img=6" },
-              { username: "Gaëlle Laurent", tags: ["DevOps", "Cloud"], location: "Nantes", avatar: "https://i.pravatar.cc/100?img=7" },
-              { username: "Hugo Lefevre", tags: ["Mobile", "Flutter"], location: "Strasbourg", avatar: "https://i.pravatar.cc/100?img=8" },
-            ],
+            loading: true,
+            users: [],
           };
         },
         computed: {
@@ -96,7 +100,26 @@
             );
           },
         },
+        async mounted() {
+          await this.fetchUsers();
+        },
         methods: {
+          async fetchUsers() {
+            this.loading = true;
+            try {
+              const data = await window.electronAPI.getUsers();
+              this.users = data.map((u, i) => ({
+                username: u.username,
+                tags: tagsPool[i % tagsPool.length],
+                location: locations[i % locations.length],
+                avatar: avatars[i % avatars.length],
+              }));
+            } catch (e) {
+              console.error("Error fetching users:", e);
+            } finally {
+              this.loading = false;
+            }
+          },
           openAddUser() {
             console.log("Ajouter un utilisateur");
           },

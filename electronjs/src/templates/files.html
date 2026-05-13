@@ -1,0 +1,230 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fichiers</title>
+    <link rel="stylesheet" href="../assets/css/all.css" />
+    <link rel="stylesheet" href="../assets/css/index.css" />
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../assets/css/myframework.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="../assets/compos/menu-button.js"></script>
+    <script src="../assets/compos/sidebar-section-header.js"></script>
+    <script src="../assets/compos/sidebar-member-item.js"></script>
+    <script src="../assets/compos/left-big-menu.js"></script>
+    <style>
+      .files-page .topbar { margin-bottom: 24px; }
+      .file-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: white;
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border: 1px solid #f0f0f0;
+        transition: 0.2s;
+      }
+      .file-card:hover {
+        border-color: #ff9838;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      }
+      .file-icon {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        background: #fff0dd;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        color: #ff9838;
+        flex-shrink: 0;
+      }
+      .file-info { flex: 1; min-width: 0; }
+      .file-name {
+        font-weight: 600;
+        font-size: 14px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      .file-meta {
+        font-size: 12px;
+        color: #7b7d85;
+        margin-top: 2px;
+      }
+      .file-delete {
+        background: none;
+        border: none;
+        color: #ccc;
+        font-size: 18px;
+        cursor: pointer;
+        padding: 4px;
+        transition: 0.2s;
+      }
+      .file-delete:hover { color: #e74c3c; }
+      .upload-area {
+        border: 2px dashed #ddd;
+        border-radius: 16px;
+        padding: 40px;
+        text-align: center;
+        background: white;
+        cursor: pointer;
+        transition: 0.2s;
+        margin-bottom: 24px;
+      }
+      .upload-area:hover {
+        border-color: #ff9838;
+        background: #fffaf5;
+      }
+      .upload-area i {
+        font-size: 40px;
+        color: #ff9838;
+        margin-bottom: 12px;
+      }
+      .upload-area p {
+        color: #7b7d85;
+        margin: 0;
+        font-size: 14px;
+      }
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: #7b7d85;
+      }
+      .empty-state i {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
+      #fileInput { display: none; }
+    </style>
+  </head>
+  <body>
+    <div class="dashboard-wrapper d-flex" id="app">
+      <aside class="sidebar">
+        <left-big-menu></left-big-menu>
+      </aside>
+      <main class="main-content files-page">
+        <div class="topbar">
+          <div class="topbar-left">
+            <h3 class="mb-0">Fichiers</h3>
+          </div>
+        </div>
+
+        <div class="upload-area clicked" @click="triggerUpload">
+          <i class="bi bi-cloud-arrow-up"></i>
+          <p>Cliquez pour uploader un fichier</p>
+        </div>
+        <input type="file" id="fileInput" @change="uploadFile" />
+
+        <div v-if="uploading" class="text-center my-4">
+          <div class="spinner-border" role="status"></div>
+          <p class="mt-2">Upload en cours...</p>
+        </div>
+
+        <div v-if="error" class="alert alert-danger">{{ error }}</div>
+
+        <div v-if="!loading && files.length === 0" class="empty-state">
+          <i class="bi bi-folder2-open"></i>
+          <p>Aucun fichier pour le moment</p>
+        </div>
+
+        <div v-if="!loading">
+          <div class="file-card" v-for="f in files" :key="f.id">
+            <div class="file-icon">
+              <i :class="getFileIcon(f.mime_type)"></i>
+            </div>
+            <div class="file-info">
+              <div class="file-name">{{ f.original_name }}</div>
+              <div class="file-meta">{{ formatSize(f.size) }} &middot; {{ f.created_at }}</div>
+            </div>
+            <button class="file-delete" @click="removeFile(f.id)" title="Supprimer">
+              <i class="bi bi-trash"></i>
+            </button>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          files: [],
+          loading: true,
+          uploading: false,
+          error: "",
+        },
+        async mounted() {
+          await this.fetchFiles();
+        },
+        methods: {
+          async fetchFiles() {
+            this.loading = true;
+            try {
+              this.files = await window.electronAPI.getFiles();
+            } catch (e) {
+              console.error(e);
+            } finally {
+              this.loading = false;
+            }
+          },
+          triggerUpload() {
+            document.getElementById("fileInput").click();
+          },
+          async uploadFile(e) {
+            const input = e.target;
+            if (!input.files.length) return;
+            const file = input.files[0];
+            this.uploading = true;
+            this.error = "";
+            try {
+              const formData = new FormData();
+              formData.append("file", file);
+              formData.append("uploaded_by", "1");
+              const res = await fetch("http://localhost:5000/api/files/upload", {
+                method: "POST",
+                body: formData,
+              });
+              if (!res.ok) throw new Error("Upload failed");
+              await this.fetchFiles();
+            } catch (e) {
+              this.error = "Erreur lors de l'upload: " + e.message;
+            } finally {
+              this.uploading = false;
+              input.value = "";
+            }
+          },
+          async removeFile(id) {
+            try {
+              await window.electronAPI.deleteFile(id);
+              this.files = this.files.filter(f => f.id !== id);
+            } catch (e) {
+              this.error = "Erreur lors de la suppression";
+            }
+          },
+          getFileIcon(mime) {
+            if (!mime) return "bi-file-earmark";
+            if (mime.startsWith("image/")) return "bi-file-earmark-image";
+            if (mime.startsWith("video/")) return "bi-file-earmark-play";
+            if (mime.startsWith("audio/")) return "bi-file-earmark-music";
+            if (mime.includes("pdf")) return "bi-file-earmark-pdf";
+            if (mime.includes("zip") || mime.includes("rar")) return "bi-file-earmark-zip";
+            if (mime.includes("text") || mime.includes("document")) return "bi-file-earmark-text";
+            return "bi-file-earmark";
+          },
+          formatSize(bytes) {
+            if (!bytes) return "0 B";
+            const k = 1024;
+            const sizes = ["B", "KB", "MB", "GB"];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+          },
+        },
+      });
+    </script>
+  </body>
+</html>

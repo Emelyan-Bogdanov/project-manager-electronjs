@@ -49,6 +49,7 @@ Vue.component("left-big-menu", {
         <side-menu-button
           biclass="bi-files"
           span-text="Fichiers"
+          url="files.html"
         ></side-menu-button>
 
         <side-menu-button

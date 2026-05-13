@@ -3,8 +3,9 @@ const { contextBridge, ipcRenderer } = require('electron')
 contextBridge.exposeInMainWorld('electronAPI', {
     getUsers: () => ipcRenderer.invoke('get-users'),
     getTasks: () => ipcRenderer.invoke('get-tasks'),
-    getMessages: () => ipcRenderer.invoke('get-messages'),
     getWorkspaces: () => ipcRenderer.invoke('get-workspaces'),
+    getFiles: () => ipcRenderer.invoke('get-files'),
+    deleteFile: (id) => ipcRenderer.invoke('delete-file', id),
     login: (credentials) => ipcRenderer.invoke('login', credentials),
     logout: () => ipcRenderer.invoke('logout'),
     checkSession: () => ipcRenderer.invoke('check-session'),

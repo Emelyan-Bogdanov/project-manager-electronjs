@@ -124,35 +124,67 @@
     </div>
 
     <script>
+      const avatars = [
+        "https://i.pravatar.cc/100?img=1", "https://i.pravatar.cc/100?img=2",
+        "https://i.pravatar.cc/100?img=3", "https://i.pravatar.cc/100?img=4",
+      ];
+
       new Vue({
         el: "#app",
         data: {
           stats: [
-            { icon: "bi-people", label: "Utilisateurs", count: 24, bg: "#e8f4fd" },
-            { icon: "bi-folder", label: "Projets", count: 12, bg: "#fef3e2" },
-            { icon: "bi-check2-square", label: "Tâches", count: 156, bg: "#e8faf5" },
-            { icon: "bi-chat-dots", label: "Messages", count: 43, bg: "#f4e8fd" },
+            { icon: "bi-people", label: "Utilisateurs", count: 0, bg: "#e8f4fd" },
+            { icon: "bi-folder", label: "Projets", count: 0, bg: "#fef3e2" },
+            { icon: "bi-check2-square", label: "T\u00e2ches", count: 0, bg: "#e8faf5" },
+            { icon: "bi-chat-dots", label: "Fichiers", count: 0, bg: "#f4e8fd" },
           ],
-          recentProjects: [
-            { name: "Site E-commerce", members: 5, tasks: 23, status: "En cours", statusClass: "status-progress", color: "#ff9838" },
-            { name: "App Mobile", members: 3, tasks: 12, status: "Terminé", statusClass: "status-done", color: "#2ecc71" },
-            { name: "Dashboard Analytics", members: 4, tasks: 18, status: "En cours", statusClass: "status-progress", color: "#3498db" },
-            { name: "Refonte UI", members: 2, tasks: 8, status: "En attente", statusClass: "status-pending", color: "#e74c3c" },
-          ],
-          activities: [
-            { user: "Alice", action: "a ajouté une nouvelle tâche dans Site E-commerce", time: "il y a 5 min", avatar: "https://i.pravatar.cc/100?img=1" },
-            { user: "Bob", action: "a commenté la tâche #42", time: "il y a 12 min", avatar: "https://i.pravatar.cc/100?img=2" },
-            { user: "Claire", action: "a rejoint le projet App Mobile", time: "il y a 1h", avatar: "https://i.pravatar.cc/100?img=3" },
-            { user: "David", action: "a terminé la tâche #38", time: "il y a 2h", avatar: "https://i.pravatar.cc/100?img=4" },
-          ],
-          team: [
-            { name: "Alice Martin", role: "Chef de projet", avatar: "https://i.pravatar.cc/100?img=1", online: true },
-            { name: "Bob Dupont", role: "Développeur", avatar: "https://i.pravatar.cc/100?img=2", online: true },
-            { name: "Claire Bernard", role: "Designer", avatar: "https://i.pravatar.cc/100?img=3", online: false },
-            { name: "David Petit", role: "Développeur", avatar: "https://i.pravatar.cc/100?img=4", online: true },
-          ],
+          recentProjects: [],
+          activities: [],
+          team: [],
+        },
+        async mounted() {
+          await this.loadStats();
         },
         methods: {
+          async loadStats() {
+            try {
+              const [users, tasks, workspaces, files] = await Promise.all([
+                window.electronAPI.getUsers(),
+                window.electronAPI.getTasks(),
+                window.electronAPI.getWorkspaces(),
+                window.electronAPI.getFiles(),
+              ]);
+              this.stats[0].count = users.length;
+              this.stats[1].count = workspaces.length;
+              this.stats[2].count = tasks.length;
+              this.stats[3].count = files.length;
+
+              this.recentProjects = workspaces.slice(0, 4).map((ws, i) => ({
+                name: ws.name,
+                members: 0,
+                tasks: 0,
+                status: "En cours",
+                statusClass: "status-progress",
+                color: ["#ff9838", "#2ecc71", "#3498db", "#e74c3c"][i],
+              }));
+
+              this.team = users.slice(0, 4).map((u, i) => ({
+                name: u.username,
+                role: "Membre",
+                avatar: avatars[i],
+                online: i % 2 === 0,
+              }));
+
+              this.activities = tasks.slice(0, 4).map(t => ({
+                user: "Syst\u00e8me",
+                action: `a cr\u00e9\u00e9 la t\u00e2che "${t.title}"`,
+                time: "r\u00e9cemment",
+                avatar: avatars[Math.floor(Math.random() * avatars.length)],
+              }));
+            } catch (e) {
+              console.error("Error loading stats:", e);
+            }
+          },
           openNewProject() {
             console.log("Nouveau projet");
           },

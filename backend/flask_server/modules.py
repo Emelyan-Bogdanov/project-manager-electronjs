@@ -154,3 +154,55 @@ class Message(db.Model):
             )
             db.session.add(msg)
             db.session.commit()
+
+
+class FileEntry(db.Model):
+    __tablename__ = "files"
+    id = db.Column(db.Integer, primary_key=True)
+    filename = db.Column(db.String(250), nullable=False)
+    original_name = db.Column(db.String(250), nullable=False)
+    filepath = db.Column(db.String(500), nullable=False)
+    size = db.Column(db.Integer, default=0)
+    mime_type = db.Column(db.String(100), default="")
+    uploaded_by = db.Column(db.Integer, default=0)
+    created_at = db.Column(db.String(70), default="")
+
+
+def seed_database(db):
+    import random
+    if User.query.count() == 0:
+        for i in range(8):
+            user = User(
+                username=f"user_{i}",
+                email=f"user{i}@example.com",
+                password="1234"
+            )
+            db.session.add(user)
+        db.session.commit()
+        print("Seeded 8 users")
+    if Task.query.count() == 0:
+        statuses = ["todo", "in_progress", "done"]
+        titles = [
+            "Design system", "API Auth", "Tests unitaires", "Page parametres",
+            "Tableau de bord", "Base de donnees", "Notification email",
+            "Maquettes mobile", "CI/CD Pipeline", "Page connexion"
+        ]
+        for i in range(10):
+            task = Task(
+                title=titles[i],
+                tags=str(["Frontend", "Backend", "Design", "DevOps", "Mobile", "UI", "BDD", "Auth"][i % 8]),
+                deadline=f"{random.randint(1, 28)} Mai",
+                authorId=random.randint(1, 8),
+                images="",
+                priority=random.randint(1, 3),
+                status=statuses[i % 3]
+            )
+            db.session.add(task)
+        db.session.commit()
+        print("Seeded 10 tasks")
+    if Workspace.query.count() == 0:
+        for i in range(3):
+            ws = Workspace(name=f"Projet {i+1}", description=f"Description du projet {i+1}")
+            db.session.add(ws)
+        db.session.commit()
+        print("Seeded 3 workspaces")

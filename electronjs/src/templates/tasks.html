@@ -76,39 +76,33 @@
     </div>
 
     <script>
+      const statusLabels = { todo: "\u00c0 faire", in_progress: "En cours", done: "Termin\u00e9" };
+      const avatars = [
+        "https://i.pravatar.cc/100?img=1", "https://i.pravatar.cc/100?img=2",
+        "https://i.pravatar.cc/100?img=3", "https://i.pravatar.cc/100?img=4",
+        "https://i.pravatar.cc/100?img=5", "https://i.pravatar.cc/100?img=6",
+        "https://i.pravatar.cc/100?img=7", "https://i.pravatar.cc/100?img=8",
+      ];
+
       new Vue({
         el: "#app",
         data: {
           searchQuery: "",
-          columns: [
-            {
-              name: "À faire",
-              tasks: [
-                { title: "Design system", description: "Créer les composants de base du design system (boutons, inputs, modales)", tags: ["Design", "UI"], deadline: "15 Mai", views: 12, commentsCount: 3, author: "Claire", urls: ["https://i.pravatar.cc/100?img=3", "https://i.pravatar.cc/100?img=1"] },
-                { title: "API Auth", description: "Implémenter l'authentification JWT côté backend", tags: ["Backend", "Auth"], deadline: "18 Mai", views: 8, commentsCount: 1, author: "Bob", urls: ["https://i.pravatar.cc/100?img=2"] },
-                { title: "Tests unitaires", description: "Écrire les tests pour les modules existants", tags: ["Tests"], deadline: "20 Mai", views: 5, commentsCount: 0, author: "David", urls: ["https://i.pravatar.cc/100?img=4"] },
-                { title: "Page paramètres", description: "Créer la page de paramètres utilisateur", tags: ["Frontend", "UI"], deadline: "22 Mai", views: 7, commentsCount: 2, author: "Alice", urls: ["https://i.pravatar.cc/100?img=1", "https://i.pravatar.cc/100?img=3"] },
-              ],
-            },
-            {
-              name: "En cours",
-              tasks: [
-                { title: "Tableau de bord", description: "Finaliser les widgets du tableau de bord", tags: ["Frontend", "Dashboard"], deadline: "12 Mai", views: 24, commentsCount: 5, author: "Alice", urls: ["https://i.pravatar.cc/100?img=1", "https://i.pravatar.cc/100?img=2"] },
-                { title: "Base de données", description: "Optimiser les requêtes SQL et ajouter les index", tags: ["Backend", "BDD"], deadline: "14 Mai", views: 15, commentsCount: 4, author: "Bob", urls: ["https://i.pravatar.cc/100?img=2", "https://i.pravatar.cc/100?img=4"] },
-                { title: "Notification email", description: "Système d'envoi d'emails pour les notifications", tags: ["Backend"], deadline: "16 Mai", views: 10, commentsCount: 1, author: "David", urls: ["https://i.pravatar.cc/100?img=4"] },
-              ],
-            },
-            {
-              name: "Terminé",
-              tasks: [
-                { title: "Maquettes mobile", description: "Maquettes Figma pour la version mobile", tags: ["Design", "Mobile"], deadline: "8 Mai", views: 42, commentsCount: 7, author: "Claire", urls: ["https://i.pravatar.cc/100?img=3", "https://i.pravatar.cc/100?img=1"] },
-                { title: "CI/CD Pipeline", description: "Mettre en place GitHub Actions pour le déploiement", tags: ["DevOps"], deadline: "5 Mai", views: 18, commentsCount: 2, author: "Bob", urls: ["https://i.pravatar.cc/100?img=2"] },
-                { title: "Page connexion", description: "Interface de connexion et d'inscription", tags: ["Frontend", "Auth"], deadline: "2 Mai", views: 35, commentsCount: 6, author: "Alice", urls: ["https://i.pravatar.cc/100?img=1", "https://i.pravatar.cc/100?img=3"] },
-              ],
-            },
-          ],
+          tasks: [],
         },
         computed: {
+          columns() {
+            const groups = { todo: [], in_progress: [], done: [] };
+            this.tasks.forEach(t => {
+              const key = groups[t.status] ? t.status : "todo";
+              groups[key].push(t);
+            });
+            return [
+              { name: "\u00c0 faire", status: "todo", tasks: groups.todo },
+              { name: "En cours", status: "in_progress", tasks: groups.in_progress },
+              { name: "Termin\u00e9", status: "done", tasks: groups.done },
+            ];
+          },
           filteredColumns() {
             const q = this.searchQuery.toLowerCase();
             if (!q) return this.columns;
@@ -116,25 +110,38 @@
               ...col,
               tasks: col.tasks.filter(t =>
                 t.title.toLowerCase().includes(q) ||
-                t.description.toLowerCase().includes(q) ||
-                t.tags.some(tag => tag.toLowerCase().includes(q))
+                (t.description || "").toLowerCase().includes(q) ||
+                (t.tags || []).some(tag => tag.toLowerCase().includes(q))
               ),
             }));
           },
         },
+        async mounted() {
+          await this.fetchTasks();
+        },
         methods: {
-          openNewTask() {
-            console.log("Nouvelle tâche");
+          async fetchTasks() {
+            try {
+              const data = await window.electronAPI.getTasks();
+              this.tasks = data.map((t, i) => ({
+                title: t.title,
+                description: t.description || "Aucune description",
+                tags: typeof t.tags === "string" ? JSON.parse(t.tags) : t.tags || [],
+                deadline: t.deadline || "N/A",
+                views: t.views || 0,
+                commentsCount: t.comments || 0,
+                author: t.author || "Utilisateur",
+                status: t.status || "todo",
+                urls: [avatars[(t.authorId || 1) % avatars.length]],
+              }));
+            } catch (e) {
+              console.error("Error fetching tasks:", e);
+            }
           },
-          sortBy() {
-            console.log("Trier");
-          },
-          toggleFilters() {
-            console.log("Filtres");
-          },
-          toggleView() {
-            console.log("Changer de vue");
-          },
+          openNewTask() { console.log("Nouvelle t\u00e2che"); },
+          sortBy() { console.log("Trier"); },
+          toggleFilters() { console.log("Filtres"); },
+          toggleView() { console.log("Changer de vue"); },
         },
       });
     </script>
