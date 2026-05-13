@@ -1,4 +1,5 @@
 # Logs
+backend\instance\test.db
 logs
 *.log
 npm-debug.log*
