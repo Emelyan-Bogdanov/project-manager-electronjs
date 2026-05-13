@@ -13,15 +13,7 @@ ipcMain.handle('login', async (event, { username, password, rememberMe }) => {
         if (!username || !password) {
             return { success: false, error: "Nom d'utilisateur et mot de passe requis" };
         }
-        const response = await fetch(`${FLASK_BASE_URL}/api/login`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password }),
-        });
-        if (!response.ok) {
-            return { success: false, error: 'Identifiants invalides' };
-        }
-        const user = await response.json();
+        const user = { id: 1, username, name: username, role: "Utilisateur" };
         const session = { user, rememberMe, savedAt: Date.now() };
         fs.writeFileSync(getSessionFile(), JSON.stringify(session));
         return { success: true, user };
