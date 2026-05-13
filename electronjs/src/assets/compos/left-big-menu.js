@@ -24,8 +24,9 @@ Vue.component("left-big-menu", {
 
           <side-menu-button
             biclass="bi-house-fill"
-            count="13"
-            span-text="kkkkkkkkkk"
+            count="0"
+            span-text="Tableau de bord"
+            url="dashboard.html"
           >
           </side-menu-button>
 
@@ -43,6 +44,7 @@ Vue.component("left-big-menu", {
             <side-menu-button
               biclass="bi-stack"
               span-text="Publications"
+              url="dashboard.html"
             ></side-menu-button>
             
             <side-menu-button
