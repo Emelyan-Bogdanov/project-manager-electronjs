@@ -44,7 +44,7 @@ class Task(db.Model) :
     deadline = db.Column(db.String(70) , nullable=False)
     authorId = db.Column(db.Integer)
     """ images paths are arrays , but stored as json dumped """
-    images = db.Column(db.String(250) , default=""),
+    images = db.Column(db.String(250) , default="")
     priority = db.Column(db.Integer, default=1),  # 1 = Low, 2 = Medium, 3 = High
     status = db.Column(db.String(50), default="todo")  # todo, in_progress, done
     
@@ -73,3 +73,14 @@ class Message(db.Model):
     authorId = db.Column(db.Integer,nullable=False)
     workspaceId = db.Column(db.Integer,nullable=False)
     
+    @staticmethod
+    def create_synthetic(db, count=5):
+        import random
+        for i in range(count):
+            msg = Message(
+                text=f"Message texte {i}",
+                authorId=random.randint(1, 100),
+                workspaceId=random.randint(1, 10)
+            )
+            db.session.add(msg)
+            db.session.commit()

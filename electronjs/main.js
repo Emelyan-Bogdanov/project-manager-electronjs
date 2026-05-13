@@ -46,6 +46,11 @@ function MainApp() {
     return [{id: 1, text: 'Exemple de message'}];
   });
 
+  ipcMain.handle('get-workspaces', async () => {
+    // Implémentez ici la logique pour récupérer les workspaces
+    return [{id: 1, name: 'Exemple de workspace'}];
+  });
+
   win.on("closed", () => {
     win = null;
   });
