@@ -1,4 +1,4 @@
-from flask import Blueprint , jsonify
+from flask import Blueprint, request, jsonify
 from ..modules import User
 
 users_bp = Blueprint("users",__name__)
@@ -49,17 +49,18 @@ def deleteUser(userid:int):
 
 
 
-# add new user
-
-# @users_bp.route("/adduser/<userid>")
-# def deleteUser(userid:int):
-#     from ..modules import db
-#     try :
-#         user = User()
-#         db.session.add(user)
-#         db.session.commit()
-#         return f"user {userid} deleted"
-#     except Exception as e :
-#         if str(e) == "Class 'builtins.NoneType' is not mapped" :
-#             return "ERROR : maybe user not found : \n" + str(e)
-#         return f"ERROR : {str(e)}"
+@users_bp.route("/api/users", methods=["POST"])
+def add_user():
+    data = request.json
+    from ..modules import db
+    try:
+        user = User(
+            username=data.get("username"),
+            email=data.get("email"),
+            password=data.get("password", "1234")
+        )
+        db.session.add(user)
+        db.session.commit()
+        return jsonify({"id": user.id, "username": user.username, "email": user.email, "message": "User created"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 400

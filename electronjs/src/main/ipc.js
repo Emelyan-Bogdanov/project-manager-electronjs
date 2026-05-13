@@ -80,3 +80,38 @@ ipcMain.handle('delete-file', async (event, fileId) => {
         return { success: false, error: e.message };
     }
 });
+
+// ── Create ──
+
+ipcMain.handle('create-user', async (event, data) => {
+    try {
+        return await apiFetch('/api/users', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});
+
+ipcMain.handle('create-task', async (event, data) => {
+    try {
+        return await apiFetch('/addtask', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});
+
+ipcMain.handle('create-workspace', async (event, data) => {
+    try {
+        return await apiFetch('/addworkspace', {
+            method: 'POST',
+            body: JSON.stringify(data),
+        });
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});

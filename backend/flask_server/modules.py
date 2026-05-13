@@ -169,7 +169,7 @@ class FileEntry(db.Model):
 
 
 def seed_database(db):
-    import random
+    import random, json
     if User.query.count() == 0:
         for i in range(8):
             user = User(
@@ -187,10 +187,11 @@ def seed_database(db):
             "Tableau de bord", "Base de donnees", "Notification email",
             "Maquettes mobile", "CI/CD Pipeline", "Page connexion"
         ]
+        tag_pool = ["Frontend", "Backend", "Design", "DevOps", "Mobile", "UI", "BDD", "Auth"]
         for i in range(10):
             task = Task(
                 title=titles[i],
-                tags=str(["Frontend", "Backend", "Design", "DevOps", "Mobile", "UI", "BDD", "Auth"][i % 8]),
+                tags=json.dumps([tag_pool[i % 8]]),
                 deadline=f"{random.randint(1, 28)} Mai",
                 authorId=random.randint(1, 8),
                 images="",

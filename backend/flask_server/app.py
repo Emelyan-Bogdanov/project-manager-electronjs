@@ -1,6 +1,6 @@
 import os
 from flask import Flask
-from .modules import db, seed_database
+from .modules import db
 from flask_cors import CORS
 
 def create_app() :
@@ -13,7 +13,6 @@ def create_app() :
 
     with app.app_context() :
         db.create_all()
-        seed_database(db)
 
     from .routes import main_bp, message_bp, workspace_bp, task_bp, users_bp, files_bp
 

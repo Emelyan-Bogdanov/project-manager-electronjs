@@ -123,6 +123,97 @@
       </main>
     </div>
 
+    <!-- New Project Modal -->
+    <div class="modal-overlay" v-if="showModal" @click.self="showModal = false">
+      <div class="modal-box">
+        <h4>Nouveau projet</h4>
+        <div class="form-group">
+          <label>Nom du projet</label>
+          <input type="text" v-model="newProject.name" placeholder="Entrez le nom" />
+        </div>
+        <div class="form-group">
+          <label>Description</label>
+          <textarea v-model="newProject.description" placeholder="Description" rows="3"></textarea>
+        </div>
+        <div class="modal-actions">
+          <button class="btn-cancel" @click="showModal = false">Annuler</button>
+          <button class="btn-submit" @click="createProject" :disabled="!newProject.name">Cr\u00e9er</button>
+        </div>
+      </div>
+    </div>
+
+    <style>
+      .modal-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.4);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        z-index: 2000;
+      }
+      .modal-box {
+        background: white;
+        border-radius: 18px;
+        padding: 28px;
+        width: 420px;
+        max-width: 90vw;
+        box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      }
+      .modal-box h4 {
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+      .modal-box .form-group {
+        margin-bottom: 16px;
+      }
+      .modal-box label {
+        display: block;
+        font-size: 13px;
+        font-weight: 600;
+        margin-bottom: 6px;
+        color: #333;
+      }
+      .modal-box input,
+      .modal-box textarea {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 14px;
+        outline: none;
+        box-sizing: border-box;
+        font-family: inherit;
+      }
+      .modal-box input:focus,
+      .modal-box textarea:focus {
+        border-color: #ff9838;
+      }
+      .modal-actions {
+        display: flex;
+        gap: 10px;
+        justify-content: flex-end;
+        margin-top: 20px;
+      }
+      .btn-cancel {
+        padding: 10px 20px;
+        border: 1px solid #e0e0e0;
+        border-radius: 10px;
+        background: white;
+        cursor: pointer;
+      }
+      .btn-submit {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        background: #ff9838;
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+      }
+      .btn-submit:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+
     <script>
       const avatars = [
         "https://i.pravatar.cc/100?img=1", "https://i.pravatar.cc/100?img=2",
@@ -141,6 +232,8 @@
           recentProjects: [],
           activities: [],
           team: [],
+          showModal: false,
+          newProject: { name: "", description: "" },
         },
         async mounted() {
           await this.loadStats();
@@ -186,7 +279,20 @@
             }
           },
           openNewProject() {
-            console.log("Nouveau projet");
+            this.showModal = true;
+            this.newProject = { name: "", description: "" };
+          },
+          async createProject() {
+            try {
+              await window.electronAPI.createWorkspace({
+                name: this.newProject.name,
+                description: this.newProject.description || "Aucune description",
+              });
+              this.showModal = false;
+              await this.loadStats();
+            } catch (e) {
+              console.error(e);
+            }
           },
         },
       });

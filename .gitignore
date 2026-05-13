@@ -106,6 +106,9 @@ dist
 **/.vitepress/cache
 
 *.db
+__pycache__/
+*.pyc
+uploads/
 # Docusaurus cache and generated files
 .docusaurus
 

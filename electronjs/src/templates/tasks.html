@@ -49,9 +49,29 @@
           </div>
           <div class="filters">
             <span class="clicked" @click="sortBy"><i class="bi bi-funnel"></i> Trier</span>
-            <span class="clicked" @click="toggleFilters"><i class="bi bi-sliders"></i> Filtres</span>
+            <span class="clicked" @click="showFilters = !showFilters"><i class="bi bi-sliders"></i> Filtres</span>
             <span class="clicked" @click="toggleView"><i class="bi bi-eye"></i> Vue</span>
           </div>
+        </div>
+
+        <div class="filter-panel" v-if="showFilters">
+          <div class="filter-group">
+            <label>Filtrer par tag</label>
+            <select v-model="selectedTag">
+              <option value="">Tous les tags</option>
+              <option v-for="tag in availableTags" :key="tag" :value="tag">{{ tag }}</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Filtrer par utilisateur</label>
+            <select v-model="selectedUser">
+              <option value="">Tous les utilisateurs</option>
+              <option v-for="user in users" :key="user.id" :value="user.id">{{ user.username }}</option>
+            </select>
+          </div>
+          <button class="clear-filters" @click="clearFilters" v-if="selectedTag || selectedUser">
+            <i class="bi bi-x-circle"></i> Effacer les filtres
+          </button>
         </div>
 
         <div class="board">
@@ -89,8 +109,17 @@
         data: {
           searchQuery: "",
           tasks: [],
+          users: [],
+          showFilters: false,
+          selectedTag: "",
+          selectedUser: "",
         },
         computed: {
+          availableTags() {
+            const tags = new Set();
+            this.tasks.forEach(t => (t.tags || []).forEach(tag => tags.add(tag)));
+            return [...tags].sort();
+          },
           columns() {
             const groups = { todo: [], in_progress: [], done: [] };
             this.tasks.forEach(t => {
@@ -105,19 +134,25 @@
           },
           filteredColumns() {
             const q = this.searchQuery.toLowerCase();
-            if (!q) return this.columns;
+            const tag = this.selectedTag;
+            const userId = this.selectedUser;
+            const hasFilters = q || tag || userId;
+            if (!hasFilters) return this.columns;
             return this.columns.map(col => ({
               ...col,
-              tasks: col.tasks.filter(t =>
-                t.title.toLowerCase().includes(q) ||
-                (t.description || "").toLowerCase().includes(q) ||
-                (t.tags || []).some(tag => tag.toLowerCase().includes(q))
-              ),
+              tasks: col.tasks.filter(t => {
+                if (q && !t.title.toLowerCase().includes(q) &&
+                    !(t.description || "").toLowerCase().includes(q) &&
+                    !(t.tags || []).some(tg => tg.toLowerCase().includes(q))) return false;
+                if (tag && !(t.tags || []).includes(tag)) return false;
+                if (userId && t.authorId != userId) return false;
+                return true;
+              }),
             }));
           },
         },
         async mounted() {
-          await this.fetchTasks();
+          await Promise.all([this.fetchTasks(), this.fetchUsers()]);
         },
         methods: {
           async fetchTasks() {
@@ -126,11 +161,12 @@
               this.tasks = data.map((t, i) => ({
                 title: t.title,
                 description: t.description || "Aucune description",
-                tags: typeof t.tags === "string" ? JSON.parse(t.tags) : t.tags || [],
+                tags: t.tags || [],
                 deadline: t.deadline || "N/A",
                 views: t.views || 0,
                 commentsCount: t.comments || 0,
-                author: t.author || "Utilisateur",
+                author: t.authorName || "Utilisateur",
+                authorId: t.authorId,
                 status: t.status || "todo",
                 urls: [avatars[(t.authorId || 1) % avatars.length]],
               }));
@@ -138,9 +174,37 @@
               console.error("Error fetching tasks:", e);
             }
           },
-          openNewTask() { console.log("Nouvelle t\u00e2che"); },
+          async fetchUsers() {
+            try {
+              this.users = await window.electronAPI.getUsers();
+            } catch (e) {
+              console.error("Error fetching users:", e);
+            }
+          },
+          openNewTask() {
+            this.showTaskModal = true;
+            this.newTask = { title: "", deadline: "", status: "todo", tags: "" };
+          },
+          async createTask() {
+            try {
+              await window.electronAPI.createTask({
+                title: this.newTask.title,
+                deadline: this.newTask.deadline || "N/A",
+                status: this.newTask.status,
+                tags: JSON.stringify([this.newTask.tags]),
+                authorId: 1,
+              });
+              this.showTaskModal = false;
+              await this.fetchTasks();
+            } catch (e) {
+              console.error(e);
+            }
+          },
+          clearFilters() {
+            this.selectedTag = "";
+            this.selectedUser = "";
+          },
           sortBy() { console.log("Trier"); },
-          toggleFilters() { console.log("Filtres"); },
           toggleView() { console.log("Changer de vue"); },
         },
       });

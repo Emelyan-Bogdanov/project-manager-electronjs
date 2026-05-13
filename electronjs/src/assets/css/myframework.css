@@ -240,6 +240,64 @@ body {
   font-size: 14px;
 }
 
+.filter-panel {
+  background: white;
+  border-radius: 16px;
+  padding: 16px 18px;
+  margin-bottom: 22px;
+  display: flex;
+  align-items: flex-end;
+  gap: 20px;
+  flex-wrap: wrap;
+  outline: solid 2px #e2e2e2;
+}
+
+.filter-group {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 180px;
+}
+
+.filter-group label {
+  font-size: 13px;
+  font-weight: 600;
+  color: #555;
+}
+
+.filter-group select {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 10px;
+  font-size: 14px;
+  outline: none;
+  background: white;
+  cursor: pointer;
+}
+
+.filter-group select:focus {
+  border-color: #6c63ff;
+}
+
+.clear-filters {
+  background: none;
+  border: 1px solid #ddd;
+  padding: 8px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  cursor: pointer;
+  color: #e74c3c;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.clear-filters:hover {
+  background: #fef2f2;
+  border-color: #e74c3c;
+}
+
 /* =========================
         BOARD
     ========================== */

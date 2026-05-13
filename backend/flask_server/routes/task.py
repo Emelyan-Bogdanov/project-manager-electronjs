@@ -1,33 +1,44 @@
+import json
 from flask import Blueprint, request, jsonify
-from ..modules import Task, db
+from ..modules import Task, User, db
 
 task_bp = Blueprint("tasks", __name__)
+
+def parse_tags(tags_raw):
+    if not tags_raw:
+        return []
+    if isinstance(tags_raw, list):
+        return tags_raw
+    try:
+        return json.loads(tags_raw)
+    except (json.JSONDecodeError, TypeError):
+        try:
+            return eval(tags_raw)
+        except:
+            return [tags_raw]
+
+def task_to_dict(task):
+    author = User.query.get(task.authorId) if task.authorId else None
+    return {
+        "id": task.id,
+        "title": task.title,
+        "tags": parse_tags(task.tags),
+        "deadline": task.deadline,
+        "authorId": task.authorId,
+        "authorName": author.username if author else "Utilisateur",
+        "status": task.status,
+        "priority": task.priority
+    }
 
 @task_bp.route("/tasks")
 def all_tasks():
     tasks = Task.query.all()
-    return jsonify([{
-        "id": task.id,
-        "title": task.title,
-        "tags": task.tags,
-        "deadline": task.deadline,
-        "authorId": task.authorId,
-        "status": task.status,
-        "priority": task.priority
-    } for task in tasks])
+    return jsonify([task_to_dict(t) for t in tasks])
 
 @task_bp.route("/api/tasks")
 def api_all_tasks():
     tasks = Task.query.all()
-    return jsonify([{
-        "id": task.id,
-        "title": task.title,
-        "tags": task.tags,
-        "deadline": task.deadline,
-        "authorId": task.authorId,
-        "status": task.status,
-        "priority": task.priority
-    } for task in tasks])
+    return jsonify([task_to_dict(t) for t in tasks])
 
 @task_bp.route("/addtask", methods=["POST"])
 def add_task():
