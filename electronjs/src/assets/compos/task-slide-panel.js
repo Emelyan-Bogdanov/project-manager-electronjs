@@ -14,6 +14,7 @@ Vue.component("task-slide-panel", {
       saving: false,
       focusedBlock: null,
       titlePrompt: { visible: false, fileData: null, insertIdx: undefined, title: "" },
+      saveError: "",
     };
   },
   watch: {
@@ -92,8 +93,25 @@ Vue.component("task-slide-panel", {
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
-          this.titlePrompt = { visible: true, fileData: ev.target.result, insertIdx, title: "" };
-          this.showBlockMenu = null;
+          const img = new Image();
+          img.onload = () => {
+            const MAX = 1200;
+            let w = img.width, h = img.height;
+            if (w > MAX || h > MAX) {
+              const ratio = Math.min(MAX / w, MAX / h);
+              w = Math.round(w * ratio);
+              h = Math.round(h * ratio);
+            }
+            const canvas = document.createElement("canvas");
+            canvas.width = w;
+            canvas.height = h;
+            const ctx = canvas.getContext("2d");
+            ctx.drawImage(img, 0, 0, w, h);
+            const compressed = canvas.toDataURL("image/jpeg", 0.7);
+            this.titlePrompt = { visible: true, fileData: compressed, insertIdx, title: "" };
+            this.showBlockMenu = null;
+          };
+          img.src = ev.target.result;
         };
         reader.readAsDataURL(file);
       };
@@ -117,6 +135,7 @@ Vue.component("task-slide-panel", {
     },
     async save() {
       this.saving = true;
+      this.saveError = "";
       try {
         await window.electronAPI.updateTask(this.task.id, {
           description: this.serialized,
@@ -124,6 +143,7 @@ Vue.component("task-slide-panel", {
         this.$emit("saved");
       } catch (e) {
         console.error(e);
+        this.saveError = "Image data too large. Use smaller images.";
       } finally {
         this.saving = false;
       }
@@ -146,6 +166,7 @@ Vue.component("task-slide-panel", {
         <div class="slide-panel-header">
           <h3>{{ task ? task.title : 'Loading...' }}</h3>
           <div class="slide-panel-actions">
+            <span v-if="saveError" class="save-error">{{ saveError }}</span>
             <button v-if="editing" class="slide-btn save-btn" @click="save" :disabled="saving">
               {{ saving ? 'Saving...' : 'Save' }}
             </button>

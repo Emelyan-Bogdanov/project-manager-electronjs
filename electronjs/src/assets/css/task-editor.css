@@ -561,3 +561,11 @@
   font-weight: 600;
   cursor: pointer;
 }
+
+.save-error {
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+}
