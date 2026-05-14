@@ -22,12 +22,17 @@ def task_to_dict(task):
     return {
         "id": task.id,
         "title": task.title,
+        "taskType": task.taskType or "basic",
         "description": task.description or "",
         "tags": parse_json_field(task.tags),
+        "urls": parse_json_field(task.urls),
         "images": parse_json_field(task.images),
+        "files": parse_json_field(task.files),
         "deadline": task.deadline,
         "authorId": task.authorId,
-        "authorName": author.username if author else "Utilisateur",
+        "authorName": (author.name or author.username) if author else "Utilisateur",
+        "authorUsername": author.username if author else "",
+        "authorAvatar": author.avatar if author else "",
         "status": task.status,
         "priority": task.priority
     }
@@ -49,13 +54,16 @@ def add_task():
         title=data.get("title"),
         tags=data.get("tags"),
         description=data.get("description", ""),
+        urls=data.get("urls", "[]"),
         deadline=data.get("deadline"),
         authorId=data.get("authorId"),
         images=data.get("images", "[]"),
+        files=data.get("files", "[]"),
+        taskType=data.get("taskType", "basic"),
         priority=data.get("priority", 1),
         status=data.get("status", "todo")
     )
-    return jsonify({"id": task.id, "message": "Task added"})
+    return jsonify({"id": task.id, "task": task_to_dict(task), "message": "Task added"})
 
 @task_bp.route("/task/<int:task_id>")
 def task_info(task_id):
