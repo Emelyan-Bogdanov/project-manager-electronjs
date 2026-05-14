@@ -11,6 +11,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     createUser: (data) => ipcRenderer.invoke('create-user', data),
     updateUser: (id, data) => ipcRenderer.invoke('update-user', id, data),
     createTask: (data) => ipcRenderer.invoke('create-task', data),
+    updateTask: (id, data) => ipcRenderer.invoke('update-task', id, data),
     createWorkspace: (data) => ipcRenderer.invoke('create-workspace', data),
     login: (credentials) => ipcRenderer.invoke('login', credentials),
     logout: () => ipcRenderer.invoke('logout'),

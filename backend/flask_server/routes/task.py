@@ -68,3 +68,11 @@ def task_info(task_id):
     if not task:
         return jsonify({"error": "Task not found"}), 404
     return jsonify(task_to_dict(task))
+
+@task_bp.route("/task/<int:task_id>", methods=["PATCH"])
+def update_task(task_id):
+    data = request.json
+    task = Task.update_task(task_id, **data)
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
+    return jsonify(task_to_dict(task))

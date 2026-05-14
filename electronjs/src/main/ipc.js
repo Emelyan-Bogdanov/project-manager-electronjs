@@ -143,6 +143,17 @@ ipcMain.handle('create-task', async (event, data) => {
     }
 });
 
+ipcMain.handle('update-task', async (event, id, data) => {
+    try {
+        return await apiFetch(`/task/${id}`, {
+            method: 'PATCH',
+            body: JSON.stringify(data),
+        });
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});
+
 ipcMain.handle('create-workspace', async (event, data) => {
     try {
         return await apiFetch('/addworkspace', {

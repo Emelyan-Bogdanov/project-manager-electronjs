@@ -18,6 +18,7 @@
     <script src="../assets/compos/column-title.js"></script>
     <script src="../assets/compos/comp-logo.js"></script>
     <script src="../assets/compos/left-big-menu.js"></script>
+    <script src="../assets/compos/task-slide-panel.js"></script>
 
     <link
       rel="stylesheet"
@@ -171,6 +172,13 @@
           </div>
         </div>
       </div>
+
+      <task-slide-panel
+        :task-id="selectedTaskId"
+        :visible="showTaskPanel"
+        @close="showTaskPanel = false; selectedTaskId = null"
+        @saved="showTaskPanel = false; selectedTaskId = null; fetchTasks()"
+      ></task-slide-panel>
     </div>
 
     <script>
@@ -199,6 +207,8 @@
           selectedTag: "",
           selectedUser: "",
           showTaskModal: false,
+          showTaskPanel: false,
+          selectedTaskId: null,
           newTask: emptyTask(),
         },
         computed: {
@@ -328,7 +338,10 @@
             }
           },
           openTask(id) {
-            if (id) window.electronAPI.navigate(`src/templates/task.html?id=${id}`);
+            if (id) {
+              this.selectedTaskId = id;
+              this.showTaskPanel = true;
+            }
           },
           plainText(html) {
             const div = document.createElement("div");

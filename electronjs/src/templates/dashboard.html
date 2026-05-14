@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
     <link rel="stylesheet" href="../assets/css/myframework.css" />
     <link rel="stylesheet" href="../assets/css/dashboard.css" />
+    <link rel="stylesheet" href="../assets/css/task-editor.css" />
 
     <!-- vuejs -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
@@ -24,6 +25,7 @@
     <script src="../assets/compos/project-list-item.js"></script>
     <script src="../assets/compos/activity-item.js"></script>
     <script src="../assets/compos/team-member-item.js"></script>
+    <script src="../assets/compos/task-slide-panel.js"></script>
 
     <!-- Icons -->
     <link
@@ -148,6 +150,13 @@
           </div>
         </div>
       </div>
+
+      <task-slide-panel
+        :task-id="selectedTaskId"
+        :visible="showTaskPanel"
+        @close="showTaskPanel = false; selectedTaskId = null"
+        @saved="showTaskPanel = false; selectedTaskId = null; loadStats()"
+      ></task-slide-panel>
     </div>
 
     <script>
@@ -165,6 +174,8 @@
           activityLog: [],
           team: [],
           showModal: false,
+          showTaskPanel: false,
+          selectedTaskId: null,
           newProject: { name: "", description: "" },
           projectLoading: false,
           projectError: "",
@@ -254,7 +265,8 @@
           },
           openTask(id) {
             if (id) {
-              window.electronAPI.navigate(`src/templates/task.html?id=${id}`);
+              this.selectedTaskId = id;
+              this.showTaskPanel = true;
             }
           },
         },
