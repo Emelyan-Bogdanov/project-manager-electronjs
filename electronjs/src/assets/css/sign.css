@@ -1,0 +1,134 @@
+body {
+  background: linear-gradient(135deg, #171922 0%, #2d2f36 100%);
+  font-family: Arial, sans-serif;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 24px;
+}
+.auth-container {
+  background: white;
+  padding: 36px;
+  border-radius: 20px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  width: 430px;
+  max-width: 100%;
+}
+.auth-logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 28px;
+}
+.auth-logo .logo-circle {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ff8c2f;
+  box-shadow:
+    0 0 0 4px rgba(255, 140, 47, 0.15),
+    0 0 0 8px rgba(255, 140, 47, 0.08);
+}
+.auth-logo h4 {
+  margin: 0;
+  font-weight: 700;
+  color: #1d2340;
+}
+.auth-title {
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #1d2340;
+}
+.auth-subtitle {
+  color: #7b7d85;
+  font-size: 14px;
+  margin-bottom: 24px;
+}
+.form-group {
+  margin-bottom: 16px;
+}
+.form-group label {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: #333;
+}
+.form-group input {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  font-size: 14px;
+  outline: none;
+  transition: border 0.2s;
+  box-sizing: border-box;
+}
+.form-group input:focus {
+  border-color: #ff9838;
+}
+.btn-signup {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 12px;
+  background: #ff9838;
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+.btn-signup:hover {
+  background: #e8882e;
+}
+.btn-signup:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+.auth-footer {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 14px;
+  color: #7b7d85;
+}
+.auth-footer a {
+  color: #ff9838;
+  text-decoration: none;
+  font-weight: 600;
+}
+.error-msg {
+  color: #e74c3c;
+  font-size: 13px;
+  margin-bottom: 12px;
+  display: none;
+}
+.error-msg.show {
+  display: block;
+}
+.profile-preview {
+  width: 86px;
+  height: 86px;
+  border-radius: 50%;
+  object-fit: cover;
+  display: block;
+  margin: 0 auto 18px;
+  border: 3px solid #ff9838;
+}
+.tag-preview {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+.tag-preview span {
+  background: #fff2e8;
+  color: #c96917;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 6px 10px;
+}

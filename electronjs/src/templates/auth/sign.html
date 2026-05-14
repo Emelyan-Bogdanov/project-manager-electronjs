@@ -1,204 +1,252 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Inscription</title>
     <link rel="stylesheet" href="../../assets/css/all.css" />
     <link rel="stylesheet" href="../../assets/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
-    <style>
-        body {
-            background: linear-gradient(135deg, #171922 0%, #2d2f36 100%);
-            font-family: Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
-        .auth-container {
-            background: white;
-            padding: 40px;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-            width: 420px;
-        }
-        .auth-logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 32px;
-        }
-        .auth-logo .logo-circle {
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            background: #ff8c2f;
-            box-shadow: 0 0 0 4px rgba(255, 140, 47, 0.15), 0 0 0 8px rgba(255, 140, 47, 0.08);
-        }
-        .auth-logo h4 {
-            margin: 0;
-            font-weight: 700;
-            color: #1d2340;
-        }
-        .auth-title {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 8px;
-            color: #1d2340;
-        }
-        .auth-subtitle {
-            color: #7b7d85;
-            font-size: 14px;
-            margin-bottom: 28px;
-        }
-        .form-group {
-            margin-bottom: 18px;
-        }
-        .form-group label {
-            display: block;
-            font-size: 14px;
-            font-weight: 600;
-            margin-bottom: 6px;
-            color: #333;
-        }
-        .form-group input {
-            width: 100%;
-            padding: 12px 14px;
-            border: 1px solid #e0e0e0;
-            border-radius: 12px;
-            font-size: 14px;
-            outline: none;
-            transition: border 0.2s;
-            box-sizing: border-box;
-        }
-        .form-group input:focus {
-            border-color: #ff9838;
-        }
-        .btn-signup {
-            width: 100%;
-            padding: 12px;
-            border: none;
-            border-radius: 12px;
-            background: #ff9838;
-            color: white;
-            font-size: 16px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: background 0.2s;
-        }
-        .btn-signup:hover {
-            background: #e8882e;
-        }
-        .auth-footer {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 14px;
-            color: #7b7d85;
-        }
-        .auth-footer a {
-            color: #ff9838;
-            text-decoration: none;
-            font-weight: 600;
-        }
-        .error-msg {
-            color: #e74c3c;
-            font-size: 13px;
-            margin-bottom: 12px;
-            display: none;
-        }
-        .error-msg.show {
-            display: block;
-        }
-    </style>
-</head>
-<body>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+    <link rel="stylesheet" href="../../assets/css/sign.css" />
+  </head>
+  <body>
     <div class="auth-container" id="app">
-        <div class="auth-logo">
-            <div class="logo-circle"></div>
-            <h4>ProjectManager</h4>
+      <div class="auth-logo">
+        <div class="logo-circle"></div>
+        <h4>ProjectManager</h4>
+      </div>
+
+      <div class="auth-title">
+        {{ step === 'account' ? 'Inscription' : 'Votre profil' }}
+      </div>
+      <div class="auth-subtitle">{{ subtitle }}</div>
+
+      <div class="error-msg" :class="{ show: error }">{{ error }}</div>
+
+      <form v-if="step === 'account'" @submit.prevent="signup">
+        <div class="form-group">
+          <label for="name">Nom complet</label>
+          <input
+            type="text"
+            id="name"
+            v-model="name"
+            placeholder="Entrez votre nom complet"
+            required
+          />
         </div>
-        <div class="auth-title">Inscription</div>
-        <div class="auth-subtitle">Créez votre compte pour commencer</div>
-
-        <div class="error-msg" :class="{ show: error }">{{ error }}</div>
-
-        <form @submit.prevent="signup">
-            <div class="form-group">
-                <label for="username">Nom d'utilisateur</label>
-                <input type="text" id="username" v-model="username" placeholder="Choisissez un nom d'utilisateur" required />
-            </div>
-            <div class="form-group">
-                <label for="email">Email</label>
-                <input type="email" id="email" v-model="email" placeholder="Entrez votre email" required />
-            </div>
-            <div class="form-group">
-                <label for="password">Mot de passe</label>
-                <input type="password" id="password" v-model="password" placeholder="Minimum 6 caractères" required />
-            </div>
-            <div class="form-group">
-                <label for="confirmPassword">Confirmer le mot de passe</label>
-                <input type="password" id="confirmPassword" v-model="confirmPassword" placeholder="Répétez le mot de passe" required />
-            </div>
-            <button type="submit" class="btn-signup" :disabled="loading">
-                <span v-if="loading">Inscription...</span>
-                <span v-else>Créer mon compte</span>
-            </button>
-        </form>
-
-        <div class="auth-footer">
-            Déjà un compte ? <a href="login.html">Connectez-vous</a>
+        <div class="form-group">
+          <label for="username">Nom d'utilisateur</label>
+          <input
+            type="text"
+            id="username"
+            v-model="username"
+            placeholder="Choisissez un nom d'utilisateur"
+            required
+          />
         </div>
+        <div class="form-group">
+          <label for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            v-model="email"
+            placeholder="Entrez votre email"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <input
+            type="password"
+            id="password"
+            v-model="password"
+            placeholder="Minimum 6 caracteres"
+            required
+          />
+        </div>
+        <div class="form-group">
+          <label for="confirmPassword">Confirmer le mot de passe</label>
+          <input
+            type="password"
+            id="confirmPassword"
+            v-model="confirmPassword"
+            placeholder="Repetez le mot de passe"
+            required
+          />
+        </div>
+        <button type="submit" class="btn-signup" :disabled="loading">
+          <span v-if="loading">Inscription...</span>
+          <span v-else>Creer mon compte</span>
+        </button>
+      </form>
+
+      <form v-else @submit.prevent="saveProfile">
+        <img :src="profilePreview" alt="" class="profile-preview" />
+        <div class="form-group">
+          <label for="avatar">Photo de profil</label>
+          <input
+            type="file"
+            id="avatar"
+            accept="image/*"
+            @change="selectAvatar"
+          />
+        </div>
+        <div class="form-group">
+          <label for="location">Ville / localisation</label>
+          <input
+            type="text"
+            id="location"
+            v-model="location"
+            placeholder="Ex: Casablanca"
+          />
+        </div>
+        <div class="form-group">
+          <label for="tags">Competences</label>
+          <input
+            type="text"
+            id="tags"
+            v-model="tagsInput"
+            placeholder="Ex: Frontend, UI/UX, Flask"
+          />
+        </div>
+        <div class="tag-preview" v-if="tags.length">
+          <span v-for="tag in tags" :key="tag">{{ tag }}</span>
+        </div>
+        <button type="submit" class="btn-signup" :disabled="loading">
+          <span v-if="loading">Enregistrement...</span>
+          <span v-else>Terminer mon profil</span>
+        </button>
+      </form>
+
+      <div class="auth-footer" v-if="step === 'account'">
+        Deja un compte ? <a href="login.html">Connectez-vous</a>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <script>
-        new Vue({
-            el: "#app",
-            data: {
-                username: "",
-                email: "",
-                password: "",
-                confirmPassword: "",
-                loading: false,
-                error: "",
-            },
-            methods: {
-                async signup() {
-                    if (!this.username || !this.email || !this.password || !this.confirmPassword) {
-                        this.error = "Veuillez remplir tous les champs";
-                        return;
-                    }
-                    if (this.password.length < 6) {
-                        this.error = "Le mot de passe doit contenir au moins 6 caractères";
-                        return;
-                    }
-                    if (this.password !== this.confirmPassword) {
-                        this.error = "Les mots de passe ne correspondent pas";
-                        return;
-                    }
-                    this.loading = true;
-                    this.error = "";
-                    try {
-                        const result = await window.electronAPI.login({
-                            username: this.username,
-                            password: this.password,
-                            rememberMe: true,
-                        });
-                        if (result.success) {
-                            window.electronAPI.navigate("src/templates/dashboard.html");
-                        } else {
-                            this.error = result.error || "Erreur lors de l'inscription";
-                        }
-                    } catch (err) {
-                        this.error = "Erreur de connexion au serveur";
-                    } finally {
-                        this.loading = false;
-                    }
+      new Vue({
+        el: "#app",
+        data: {
+          step: "account",
+          createdUser: null,
+          name: "",
+          username: "",
+          email: "",
+          password: "",
+          confirmPassword: "",
+          avatar: "",
+          location: "",
+          tagsInput: "",
+          loading: false,
+          error: "",
+        },
+        computed: {
+          tags() {
+            return this.tagsInput
+              .split(",")
+              .map((tag) => tag.trim())
+              .filter(Boolean);
+          },
+          profilePreview() {
+            return (
+              this.avatar ||
+              `https://ui-avatars.com/api/?name=${encodeURIComponent(this.name || this.username || "User")}&background=f97316&color=fff`
+            );
+          },
+          subtitle() {
+            return this.step === "account"
+              ? "Creez votre compte pour commencer"
+              : "Ajoutez votre photo et vos competences";
+          },
+        },
+        methods: {
+          async signup() {
+            if (
+              !this.name ||
+              !this.username ||
+              !this.email ||
+              !this.password ||
+              !this.confirmPassword
+            ) {
+              this.error = "Veuillez remplir tous les champs";
+              return;
+            }
+            if (this.password.length < 6) {
+              this.error =
+                "Le mot de passe doit contenir au moins 6 caracteres";
+              return;
+            }
+            if (this.password !== this.confirmPassword) {
+              this.error = "Les mots de passe ne correspondent pas";
+              return;
+            }
+            this.loading = true;
+            this.error = "";
+            try {
+              const result = await window.electronAPI.createUser({
+                name: this.name,
+                username: this.username,
+                email: this.email,
+                password: this.password,
+              });
+              if (result.success) {
+                this.createdUser = result.user;
+                this.step = "profile";
+              } else {
+                this.error = result.error || "Erreur lors de l'inscription";
+              }
+            } catch (err) {
+              this.error = "Erreur de connexion au serveur";
+            } finally {
+              this.loading = false;
+            }
+          },
+          selectAvatar(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = () => {
+              this.avatar = reader.result;
+            };
+            reader.readAsDataURL(file);
+          },
+          async saveProfile() {
+            if (!this.createdUser || !this.createdUser.id) {
+              this.error = "Utilisateur introuvable";
+              return;
+            }
+            this.loading = true;
+            this.error = "";
+            try {
+              const result = await window.electronAPI.updateUser(
+                this.createdUser.id,
+                {
+                  name: this.name,
+                  username: this.username,
+                  email: this.email,
+                  avatar: this.avatar,
+                  location: this.location,
+                  tags: this.tags,
                 },
-            },
-        });
+              );
+              if (result.success) {
+                window.electronAPI.navigate("src/templates/dashboard.html");
+              } else {
+                this.error =
+                  result.error || "Erreur lors de l'enregistrement du profil";
+              }
+            } catch (err) {
+              this.error = "Erreur de connexion au serveur";
+            } finally {
+              this.loading = false;
+            }
+          },
+        },
+      });
     </script>
-</body>
+  </body>
 </html>
