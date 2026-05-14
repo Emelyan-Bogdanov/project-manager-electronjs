@@ -34,7 +34,8 @@ def task_to_dict(task):
         "status": task.status,
         "priority": task.priority,
         "workspaceId": task.workspaceId,
-        "workspaceName": workspace.name if workspace else ""
+        "workspaceName": workspace.name if workspace else "",
+        "created_at": task.created_at or ""
     }
 
 @task_bp.route("/tasks")

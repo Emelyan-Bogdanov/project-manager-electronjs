@@ -89,6 +89,7 @@ class Task(db.Model) :
     priority = db.Column(db.Integer, default=1)  # 1 = Low, 2 = Medium, 3 = High
     status = db.Column(db.String(50), default="todo")  # todo, in_progress, done
     workspaceId = db.Column(db.Integer, default=None)
+    created_at = db.Column(db.String(30), default="")
     
     @staticmethod
     def create_synthetic(db,count=5):
@@ -99,6 +100,7 @@ class Task(db.Model) :
 
     @staticmethod
     def add_task(title, tags, deadline, authorId, description="", urls="[]", images="[]", files="[]", taskType="basic", priority=1, status="todo", workspaceId=None):
+        from datetime import datetime
         task = Task(
             title=title,
             taskType=taskType,
@@ -111,7 +113,8 @@ class Task(db.Model) :
             files=files,
             priority=priority,
             status=status,
-            workspaceId=workspaceId
+            workspaceId=workspaceId,
+            created_at=datetime.now().isoformat()
         )
         db.session.add(task)
         db.session.commit()
