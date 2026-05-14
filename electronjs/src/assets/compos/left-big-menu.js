@@ -71,6 +71,12 @@ Vue.component("left-big-menu", {
           span-text="Utilisateurs"
           url="allUsers.html"
         ></side-menu-button>
+
+        <side-menu-button
+          biclass="bi-person"
+          span-text="Profil"
+          url="profile.html"
+        ></side-menu-button>
       </div>
 
       <sidebar-section-header title="Membres de projet"></sidebar-section-header>

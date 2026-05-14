@@ -116,3 +116,155 @@ button.custom-orange {
   background-color: #ff7f50;
   color: #1f3b4d;
 }
+
+/* ── Edit Mode ── */
+.edit-profile-btn {
+  background: #ff9838;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+.edit-profile-btn:hover {
+  background: #e8892e;
+}
+
+.avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.avatar-edit-overlay {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: #ff9838;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+
+.avatar-input {
+  display: none;
+}
+
+.profile-name-input {
+  font-size: 28px;
+  font-weight: 700;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 6px 12px;
+  width: 100%;
+  max-width: 400px;
+  outline: none;
+  color: #1d2340;
+}
+
+.profile-name-input:focus {
+  border-color: #ff9838;
+}
+
+.profile-body .form-control {
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  outline: none;
+  background: #fff;
+  color: #1d2340;
+}
+
+.profile-body .form-control:focus {
+  border-color: #ff9838;
+  box-shadow: 0 0 0 2px rgba(255, 152, 56, 0.15);
+}
+
+.profile-body small.form-text {
+  font-size: 12px;
+  color: #7b7d85;
+  margin-top: 4px;
+  display: block;
+}
+
+.profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.profile-tags span {
+  background: #eef6ff;
+  color: #236cae;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 12px;
+  font-weight: 600;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.profile-tags span i {
+  cursor: pointer;
+  font-size: 14px;
+  opacity: 0.6;
+}
+
+.profile-tags span i:hover {
+  opacity: 1;
+}
+
+.profile-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.profile-actions .btn-cancel {
+  background: #f4f5f8;
+  color: #1d2340;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-actions .btn-submit {
+  background: #ff9838;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.profile-actions .btn-submit:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.error-msg {
+  color: #dc2626;
+  font-size: 13px;
+  margin-top: 10px;
+}
