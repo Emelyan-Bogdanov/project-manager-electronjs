@@ -4,7 +4,6 @@ Vue.component("team-member-item", {
     avatar: { type: String, default: "" },
     name: { type: String, default: "Membre" },
     role: { type: String, default: "Role" },
-    online: { type: Boolean, default: false },
   },
   computed: {
     initials() {
@@ -24,6 +23,5 @@ Vue.component("team-member-item", {
         <div class="team-name">{{ name }}</div>
         <div class="team-role">{{ role }}</div>
       </div>
-      <span class="team-status" :class="online ? 'online' : 'offline'"></span>
     </div>`,
 });
