@@ -35,7 +35,8 @@ def task_to_dict(task):
         "priority": task.priority,
         "workspaceId": task.workspaceId,
         "workspaceName": workspace.name if workspace else "",
-        "created_at": task.created_at or ""
+        "created_at": task.created_at or "",
+        "reminder": task.reminder or ""
     }
 
 @task_bp.route("/tasks")
@@ -58,6 +59,8 @@ def add_task():
     data = request.json
     if not data.get("workspaceId"):
         return jsonify({"error": "Le projet est requis pour creer une tache"}), 400
+    if not data.get("reminder"):
+        return jsonify({"error": "Le rappel est requis pour creer une tache"}), 400
     task = Task.add_task(
         title=data.get("title"),
         tags=data.get("tags"),
@@ -70,7 +73,8 @@ def add_task():
         taskType=data.get("taskType", "basic"),
         priority=data.get("priority", 1),
         status=data.get("status", "todo"),
-        workspaceId=data.get("workspaceId")
+        workspaceId=data.get("workspaceId"),
+        reminder=data.get("reminder")
     )
     return jsonify({"id": task.id, "task": task_to_dict(task), "message": "Task added"})
 

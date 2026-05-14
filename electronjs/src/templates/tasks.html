@@ -157,6 +157,10 @@
               </div>
             </div>
             <div class="form-group">
+              <label>Rappel <span class="text-danger">*</span></label>
+              <input type="datetime-local" v-model="newTask.reminder" required />
+            </div>
+            <div class="form-group">
               <label>Projet <span class="text-danger">*</span></label>
               <select v-model="newTask.workspaceId" required>
                 <option value="">Selectionner un projet</option>
@@ -205,6 +209,7 @@
           status: "todo",
           priority: 1,
           workspaceId: "",
+          reminder: "",
           tagsInput: "",
           urlsInput: "",
           images: [],
@@ -359,6 +364,10 @@
               alert("Veuillez selectionner un projet");
               return;
             }
+            if (!this.newTask.reminder) {
+              alert("Veuillez definir un rappel");
+              return;
+            }
             const session = await window.electronAPI.checkSession();
             const authorId = session.loggedIn && session.user ? session.user.id : null;
             const tags = this.newTask.tagsInput.split(",").map((t) => t.trim()).filter(Boolean);
@@ -377,6 +386,7 @@
                 priority: this.newTask.priority,
                 authorId,
                 workspaceId: this.newTask.workspaceId,
+                reminder: this.newTask.reminder,
               });
               this.showTaskModal = false;
               await this.fetchTasks();

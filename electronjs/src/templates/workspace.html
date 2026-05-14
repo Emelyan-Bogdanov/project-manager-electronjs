@@ -137,6 +137,10 @@
               </div>
             </div>
             <div class="form-group">
+              <label>Rappel <span class="text-danger">*</span></label>
+              <input type="datetime-local" v-model="newTask.reminder" required />
+            </div>
+            <div class="form-group">
               <label>Tags (separes par des virgules)</label>
               <input type="text" v-model="newTask.tagsInput" placeholder="ex: Frontend, UI, React" />
             </div>
@@ -207,6 +211,7 @@
           deadline: "",
           status: "todo",
           priority: 1,
+          reminder: "",
           tagsInput: "",
           urlsInput: "",
           images: [],
@@ -297,6 +302,10 @@
           },
           async createTask() {
             if (!this.newTask.title.trim()) return;
+            if (!this.newTask.reminder) {
+              alert("Veuillez definir un rappel");
+              return;
+            }
             const session = await window.electronAPI.checkSession();
             const authorId = session.loggedIn && session.user ? session.user.id : null;
             const tags = this.newTask.tagsInput.split(",").map((t) => t.trim()).filter(Boolean);
@@ -315,6 +324,7 @@
                 priority: this.newTask.priority,
                 authorId,
                 workspaceId: this.workspaceId,
+                reminder: this.newTask.reminder,
               });
               this.showTaskModal = false;
               await this.fetchTasks();
