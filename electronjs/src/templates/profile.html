@@ -45,6 +45,10 @@
               <p v-if="user.projectCount !== undefined">{{ user.projectCount }} projet(s) associ\u00e9(s)</p>
               <p v-else>Aucune information</p>
             </div>
+            <div class="profile-section" v-if="user.tags && user.tags.length">
+              <h5>Competences</h5>
+              <p>{{ user.tags.join(", ") }}</p>
+            </div>
           </div>
         </div>
       </main>
@@ -57,21 +61,15 @@
     <script src="../assets/compos/comp-logo.js"></script>
     <script src="../assets/compos/left-big-menu.js"></script>
     <script>
-      const avatars = [
-        "https://i.pravatar.cc/120?img=1", "https://i.pravatar.cc/120?img=2",
-        "https://i.pravatar.cc/120?img=3", "https://i.pravatar.cc/120?img=4",
-        "https://i.pravatar.cc/120?img=5", "https://i.pravatar.cc/120?img=6",
-        "https://i.pravatar.cc/120?img=7", "https://i.pravatar.cc/120?img=8",
-      ];
-
       new Vue({
         el: "#app",
         data: {
           user: {
             name: "Chargement...",
-            avatar: avatars[0],
+            avatar: "",
             email: "",
             role: "",
+            tags: [],
           },
         },
         async mounted() {
@@ -82,13 +80,13 @@
               const users = await window.electronAPI.getUsers();
               const u = users.find(u => String(u.id) === userId);
               if (u) {
-                const idx = users.indexOf(u);
                 this.user = {
                   username: u.username,
-                  name: u.username,
+                  name: u.name || u.username,
                   email: u.email,
                   role: "Membre",
-                  avatar: avatars[idx % avatars.length],
+                  avatar: u.avatar || this.getAvatarUrl(u.name || u.username),
+                  tags: Array.isArray(u.tags) ? u.tags : [],
                 };
               }
             } catch (e) {
@@ -97,9 +95,18 @@
           } else {
             const session = await window.electronAPI.checkSession();
             if (session.loggedIn) {
-              this.user = { ...session.user, avatar: avatars[0] };
+              this.user = {
+                ...session.user,
+                avatar: session.user.avatar || this.getAvatarUrl(session.user.name || session.user.username),
+                tags: Array.isArray(session.user.tags) ? session.user.tags : [],
+              };
             }
           }
+        },
+        methods: {
+          getAvatarUrl(name) {
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(name || "User")}&background=f97316&color=fff`;
+          },
         },
       });
     </script>

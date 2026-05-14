@@ -52,7 +52,7 @@
         <div v-if="!loading" class="row g-4">
           <user-card-item
             v-for="user in filteredUsers"
-            :key="user.username"
+            :key="user.id || user.username"
             :username="user.username"
             :tags="user.tags"
             :location="user.location"
@@ -63,19 +63,6 @@
     </div>
 
     <script>
-      const avatars = [
-        "https://i.pravatar.cc/100?img=1", "https://i.pravatar.cc/100?img=2",
-        "https://i.pravatar.cc/100?img=3", "https://i.pravatar.cc/100?img=4",
-        "https://i.pravatar.cc/100?img=5", "https://i.pravatar.cc/100?img=6",
-        "https://i.pravatar.cc/100?img=7", "https://i.pravatar.cc/100?img=8",
-      ];
-      const tagsPool = [
-        ["Design", "Frontend"], ["Backend", "DevOps"], ["Design", "UI/UX"],
-        ["Frontend", "Mobile"], ["Backend", "API"], ["Fullstack", "React"],
-        ["DevOps", "Cloud"], ["Mobile", "Flutter"],
-      ];
-      const locations = ["Paris", "Lyon", "Marseille", "Toulouse", "Bordeaux", "Lille", "Nantes", "Strasbourg"];
-
       new Vue({
         el: "#app",
         data() {
@@ -104,17 +91,38 @@
             this.loading = true;
             try {
               const data = await window.electronAPI.getUsers();
-              this.users = data.map((u, i) => ({
-                username: u.username,
-                tags: tagsPool[i % tagsPool.length],
-                location: locations[i % locations.length],
-                avatar: avatars[i % avatars.length],
-              }));
+              this.users = data.map((user) => this.normalizeUser(user));
             } catch (e) {
               console.error("Error fetching users:", e);
             } finally {
               this.loading = false;
             }
+          },
+          normalizeUser(user) {
+            const username = user.username || user.name || "Utilisateur";
+            const displayName = user.name || username;
+            return {
+              id: user.id,
+              username: displayName,
+              tags: this.normalizeTags(user.tags),
+              location: user.location || user.email || "",
+              avatar: user.avatar || user.profile || this.getAvatarUrl(displayName),
+            };
+          },
+          normalizeTags(tags) {
+            if (Array.isArray(tags)) return tags;
+            if (typeof tags === "string" && tags.trim()) {
+              try {
+                const parsed = JSON.parse(tags);
+                return Array.isArray(parsed) ? parsed : [tags];
+              } catch {
+                return tags.split(",").map(tag => tag.trim()).filter(Boolean);
+              }
+            }
+            return [];
+          },
+          getAvatarUrl(username) {
+            return `https://ui-avatars.com/api/?name=${encodeURIComponent(username)}&background=f97316&color=fff`;
           },
         },
       });

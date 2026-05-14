@@ -190,6 +190,16 @@
   object-fit: cover;
 }
 
+.team-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff2e8;
+  color: #c96917;
+  font-size: 13px;
+  font-weight: 700;
+}
+
 .team-info {
   flex: 1;
 }

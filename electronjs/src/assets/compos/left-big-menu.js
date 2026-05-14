@@ -16,8 +16,8 @@ Vue.component("left-big-menu", {
       const users = await window.electronAPI.getUsers();
       this.members = users.map(u => ({
         id: u.id,
-        name: u.username,
-        url: `https://i.pravatar.cc/100?img=${(u.id % 70) || 1}`,
+        name: u.name || u.username,
+        url: u.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || u.username)}&background=f97316&color=fff`,
       }));
     } catch (e) {
       console.error("Error loading sidebar members:", e);

@@ -200,9 +200,9 @@
               }));
 
               this.team = users.slice(0, 4).map((u, i) => ({
-                name: u.username,
+                name: u.name || u.username,
                 role: "Membre",
-                avatar: avatars[i],
+                avatar: u.avatar || "",
                 online: i % 2 === 0,
               }));
 
