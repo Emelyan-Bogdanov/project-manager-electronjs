@@ -68,7 +68,14 @@
               <option v-for="user in users" :key="user.id" :value="user.id">{{ user.name || user.username }}</option>
             </select>
           </div>
-          <button class="clear-filters" @click="clearFilters" v-if="selectedTag || selectedUser">
+          <div class="filter-group">
+            <label>Filtrer par projet</label>
+            <select v-model="selectedProject">
+              <option value="">Tous les projets</option>
+              <option v-for="ws in workspaces" :key="ws.id" :value="ws.id">{{ ws.name }}</option>
+            </select>
+          </div>
+          <button class="clear-filters" @click="clearFilters" v-if="selectedTag || selectedUser || selectedProject">
             <i class="bi bi-x-circle"></i> Effacer les filtres
           </button>
         </div>
@@ -150,6 +157,13 @@
               </div>
             </div>
             <div class="form-group">
+              <label>Projet <span class="text-danger">*</span></label>
+              <select v-model="newTask.workspaceId" required>
+                <option value="">Selectionner un projet</option>
+                <option v-for="ws in workspaces" :key="ws.id" :value="ws.id">{{ ws.name }}</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label>Tags (separes par des virgules)</label>
               <input type="text" v-model="newTask.tagsInput" placeholder="ex: Frontend, UI, React" />
             </div>
@@ -190,6 +204,7 @@
           deadline: "",
           status: "todo",
           priority: 1,
+          workspaceId: "",
           tagsInput: "",
           urlsInput: "",
           images: [],
@@ -203,9 +218,11 @@
           searchQuery: "",
           tasks: [],
           users: [],
+          workspaces: [],
           showFilters: false,
           selectedTag: "",
           selectedUser: "",
+          selectedProject: "",
           showTaskModal: false,
           showTaskPanel: false,
           selectedTaskId: null,
@@ -233,7 +250,8 @@
             const q = this.searchQuery.toLowerCase();
             const tag = this.selectedTag;
             const userId = this.selectedUser;
-            if (!q && !tag && !userId) return this.columns;
+            const projectId = this.selectedProject;
+            if (!q && !tag && !userId && !projectId) return this.columns;
             return this.columns.map((col) => ({
               ...col,
               tasks: col.tasks.filter((t) => {
@@ -245,13 +263,14 @@
                 ) return false;
                 if (tag && !(t.tags || []).includes(tag)) return false;
                 if (userId && t.authorId != userId) return false;
+                if (projectId && t.workspaceId != projectId) return false;
                 return true;
               }),
             }));
           },
         },
         async mounted() {
-          await Promise.all([this.fetchTasks(), this.fetchUsers()]);
+          await Promise.all([this.fetchTasks(), this.fetchUsers(), this.fetchWorkspaces()]);
         },
         methods: {
           async fetchTasks() {
@@ -271,6 +290,8 @@
                 status: t.status || "todo",
                 image: (t.images && t.images.length > 0) ? t.images[0] : "",
                 urls: t.authorAvatar ? [t.authorAvatar] : [],
+                workspaceId: t.workspaceId,
+                workspaceName: t.workspaceName || "",
               }));
             } catch (e) {
               console.error("Error fetching tasks:", e);
@@ -281,6 +302,13 @@
               this.users = await window.electronAPI.getUsers();
             } catch (e) {
               console.error("Error fetching users:", e);
+            }
+          },
+          async fetchWorkspaces() {
+            try {
+              this.workspaces = await window.electronAPI.getWorkspaces();
+            } catch (e) {
+              console.error("Error fetching workspaces:", e);
             }
           },
           openNewTask() {
@@ -313,6 +341,10 @@
           },
           async createTask() {
             if (!this.newTask.title.trim()) return;
+            if (!this.newTask.workspaceId) {
+              alert("Veuillez selectionner un projet");
+              return;
+            }
             const session = await window.electronAPI.checkSession();
             const authorId = session.loggedIn && session.user ? session.user.id : null;
             const tags = this.newTask.tagsInput.split(",").map((t) => t.trim()).filter(Boolean);
@@ -330,6 +362,7 @@
                 files: JSON.stringify(this.newTask.files),
                 priority: this.newTask.priority,
                 authorId,
+                workspaceId: this.newTask.workspaceId,
               });
               this.showTaskModal = false;
               await this.fetchTasks();
@@ -351,6 +384,7 @@
           clearFilters() {
             this.selectedTag = "";
             this.selectedUser = "";
+            this.selectedProject = "";
           },
           sortBy() { console.log("Trier"); },
           toggleView() { console.log("Changer de vue"); },

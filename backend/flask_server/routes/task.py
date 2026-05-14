@@ -1,6 +1,6 @@
 import json
 from flask import Blueprint, request, jsonify
-from ..modules import Task, User, db
+from ..modules import Task, User, Workspace, db
 
 task_bp = Blueprint("tasks", __name__)
 
@@ -16,6 +16,7 @@ def parse_json_field(raw):
 
 def task_to_dict(task):
     author = User.query.get(task.authorId) if task.authorId else None
+    workspace = Workspace.query.get(task.workspaceId) if task.workspaceId else None
     return {
         "id": task.id,
         "title": task.title,
@@ -32,7 +33,8 @@ def task_to_dict(task):
         "authorAvatar": author.avatar if author else "",
         "status": task.status,
         "priority": task.priority,
-        "workspaceId": task.workspaceId
+        "workspaceId": task.workspaceId,
+        "workspaceName": workspace.name if workspace else ""
     }
 
 @task_bp.route("/tasks")
@@ -53,6 +55,8 @@ def workspace_tasks(workspace_id):
 @task_bp.route("/addtask", methods=["POST"])
 def add_task():
     data = request.json
+    if not data.get("workspaceId"):
+        return jsonify({"error": "Le projet est requis pour creer une tache"}), 400
     task = Task.add_task(
         title=data.get("title"),
         tags=data.get("tags"),
