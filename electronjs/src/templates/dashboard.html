@@ -71,7 +71,7 @@
           <div class="dash-card recent-projects">
             <div class="dash-card-header">
               <h5>Projets récents</h5>
-              <a href="#" class="dash-link" @click.prevent>Voir tout</a>
+              <a href="#" class="dash-link" @click.prevent="goToAllProjects">Voir tout</a>
             </div>
             <div class="dash-card-body">
               <project-list-item
@@ -262,6 +262,9 @@
             if (id) {
               window.electronAPI.navigate(`workspace.html?id=${id}`);
             }
+          },
+          goToAllProjects() {
+            window.electronAPI.navigate("projects.html");
           },
           openTask(id) {
             if (id) {
