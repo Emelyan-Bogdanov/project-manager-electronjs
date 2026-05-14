@@ -13,7 +13,7 @@ def create_app() :
 
     with app.app_context() :
         db.create_all()
-        seed_database(db)
+        # seed_database(db)
 
     from .routes import message_bp, workspace_bp, task_bp, users_bp, files_bp
 
