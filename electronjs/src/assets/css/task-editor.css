@@ -491,3 +491,73 @@
   padding: 0;
   text-align: left;
 }
+
+/* ── Image Title Prompt ── */
+.title-prompt-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 10001;
+  background: rgba(0, 0, 0, 0.35);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.title-prompt-box {
+  background: #fff;
+  border-radius: 12px;
+  padding: 28px;
+  width: 400px;
+  max-width: 90vw;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
+}
+
+.title-prompt-box h4 {
+  margin: 0 0 16px;
+  font-size: 17px;
+  font-weight: 700;
+  color: #1d2340;
+}
+
+.title-prompt-box input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  outline: none;
+  box-sizing: border-box;
+}
+
+.title-prompt-box input:focus {
+  border-color: #ff9838;
+}
+
+.title-prompt-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 18px;
+  justify-content: flex-end;
+}
+
+.title-prompt-actions .btn-cancel {
+  background: #f4f5f8;
+  color: #1d2340;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.title-prompt-actions .btn-submit {
+  background: #ff9838;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}

@@ -13,6 +13,7 @@ Vue.component("task-slide-panel", {
       showBlockMenu: null,
       saving: false,
       focusedBlock: null,
+      titlePrompt: { visible: false, fileData: null, insertIdx: undefined, title: "" },
     };
   },
   watch: {
@@ -91,18 +92,22 @@ Vue.component("task-slide-panel", {
         if (!file) return;
         const reader = new FileReader();
         reader.onload = (ev) => {
-          const title = prompt("Enter image title / caption:") || "";
-          const block = { type: "image", src: ev.target.result, title };
-          if (typeof insertIdx === "number") {
-            this.blocks.splice(insertIdx + 1, 0, block);
-          } else {
-            this.blocks.push(block);
-          }
+          this.titlePrompt = { visible: true, fileData: ev.target.result, insertIdx, title: "" };
           this.showBlockMenu = null;
         };
         reader.readAsDataURL(file);
       };
       input.click();
+    },
+    confirmImageTitle() {
+      const title = this.titlePrompt.title || "";
+      const block = { type: "image", src: this.titlePrompt.fileData, title };
+      if (typeof this.titlePrompt.insertIdx === "number") {
+        this.blocks.splice(this.titlePrompt.insertIdx + 1, 0, block);
+      } else {
+        this.blocks.push(block);
+      }
+      this.titlePrompt = { visible: false, fileData: null, insertIdx: undefined, title: "" };
     },
     onBlockInput(idx, e) {
       this.blocks[idx].content = e.target.innerHTML;
@@ -251,6 +256,17 @@ Vue.component("task-slide-panel", {
         </div>
 
         <div v-else class="slide-empty">Task not found</div>
+      </div>
+
+      <div class="title-prompt-overlay" v-if="titlePrompt.visible" @click.self="titlePrompt.visible = false">
+        <div class="title-prompt-box">
+          <h4>Image title / caption</h4>
+          <input v-model="titlePrompt.title" placeholder="Enter a title for this image..." @keyup.enter="confirmImageTitle" autofocus />
+          <div class="title-prompt-actions">
+            <button class="btn-cancel" @click="titlePrompt.visible = false">Skip</button>
+            <button class="btn-submit" @click="confirmImageTitle">Add image</button>
+          </div>
+        </div>
       </div>
     </div>
   `,

@@ -56,7 +56,7 @@ Vue.component("left-big-menu", {
       <div class="tools">
         <side-menu-button
           biclass="bi-stack"
-          span-text="Publications"
+          span-text="Projets"
           url="dashboard.html"
         ></side-menu-button>
 
