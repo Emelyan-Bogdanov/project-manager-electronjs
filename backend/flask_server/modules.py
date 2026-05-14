@@ -7,9 +7,13 @@ db = SQLAlchemy()
 class User(db.Model) :
     __tablename__ = "users"
     id = db.Column(db.Integer, primary_key=True) 
+    name = db.Column(db.String(120), default="")
     username = db.Column(db.String(80), unique=True, nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     password = db.Column(db.String(250) , nullable=False)
+    avatar = db.Column(db.Text, default="")
+    tags = db.Column(db.Text, default="[]")
+    location = db.Column(db.String(120), default="")
 
 
     @staticmethod
@@ -70,15 +74,18 @@ class Workspace(db.Model) :
 class Task(db.Model) : 
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(250),nullable=False)
+    taskType = db.Column(db.String(50), default="basic")
     """ tags are arrays , but stored as json dumped """
     tags = db.Column(db.String(300) , nullable=False)
     description = db.Column(db.Text, default="")
+    urls = db.Column(db.Text, default="[]")
     views = db.Column(db.Integer, default=0)
     comments = db.Column(db.Integer, default=0)
     deadline = db.Column(db.String(70) , nullable=False)
     authorId = db.Column(db.Integer)
     """ images paths are arrays , but stored as json dumped """
-    images = db.Column(db.String(1000) , default="[]")
+    images = db.Column(db.Text , default="[]")
+    files = db.Column(db.Text, default="[]")
     priority = db.Column(db.Integer, default=1)  # 1 = Low, 2 = Medium, 3 = High
     status = db.Column(db.String(50), default="todo")  # todo, in_progress, done
     
@@ -90,14 +97,17 @@ class Task(db.Model) :
             db.session.commit()
 
     @staticmethod
-    def add_task(title, tags, deadline, authorId, description="", images="[]", priority=1, status="todo"):
+    def add_task(title, tags, deadline, authorId, description="", urls="[]", images="[]", files="[]", taskType="basic", priority=1, status="todo"):
         task = Task(
             title=title,
+            taskType=taskType,
             tags=tags,
             description=description,
+            urls=urls,
             deadline=deadline,
             authorId=authorId,
             images=images,
+            files=files,
             priority=priority,
             status=status
         )
