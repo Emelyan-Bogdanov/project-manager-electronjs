@@ -40,6 +40,10 @@ Vue.component("project-card", {
       type: Array,
       default: () => [],
     },
+    assigneeName: {
+      type: String,
+      default: "",
+    },
   },
   template: `
         <div class="task-card clicked" @click="$emit('select')">
@@ -53,6 +57,10 @@ Vue.component("project-card", {
 
               <div class="task-text">
                 {{description}}
+              </div>
+
+              <div class="task-assignee" v-if="assigneeName">
+                <i class="bi bi-person-check"></i> {{ assigneeName }}
               </div>
 
               <div class="date-box">

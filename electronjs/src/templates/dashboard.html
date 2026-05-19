@@ -190,10 +190,13 @@
             { icon: "bi-chat-dots", label: "Fichiers", count: 0, bg: "#f4e8fd" },
             { icon: "bi-person-check", label: "Mes t\u00e2ches", count: 0, bg: "#fef9e7" },
             { icon: "bi-check-circle", label: "Termin\u00e9es", count: 0, bg: "#e8faf5" },
+            { icon: "bi-person-badge", label: "Assign\u00e9es", count: 0, bg: "#f0e6ff" },
+            { icon: "bi-bar-chart", label: "T\u00e2ches/projet", count: 0, bg: "#fff5e6" },
           ],
           recentProjects: [],
           activities: [],
           activityLog: [],
+          allActivities: [],
           team: [],
           showModal: false,
           showTaskPanel: false,
@@ -233,6 +236,8 @@
             this.stats[3].count = files.length;
             this.stats[4].count = userId ? tasks.filter(t => t.authorId === userId).length : 0;
             this.stats[5].count = tasks.filter(t => t.status === "done").length;
+            this.stats[6].count = userId ? (await window.electronAPI.getAssignedTasks(userId) || []).length : 0;
+            this.stats[7].count = workspaces.length > 0 ? Math.round(tasks.length / workspaces.length) : 0;
 
             const wsTaskCounts = {};
             const wsStatuses = {};
@@ -276,6 +281,13 @@
               user: t.authorName || "Utilisateur",
               action: `a cr\u00e9\u00e9 la t\u00e2che "${t.title}"`,
               time: "r\u00e9cemment",
+              avatar: t.authorAvatar || "",
+            }));
+            this.allActivities = tasks.map(t => ({
+              taskId: t.id,
+              user: t.authorName || "Utilisateur",
+              action: `a cr\u00e9\u00e9 la t\u00e2che "${t.title}"`,
+              time: t.created_at || "r\u00e9cemment",
               avatar: t.authorAvatar || "",
             }));
             this.activities = [...this.activityLog, ...taskActivities].slice(0, 8);
@@ -396,7 +408,11 @@
             }
           },
           showAllActivity() {
-            window.electronAPI.navigate("tasks.html");
+            if (this.activityLog.length > 0 || this.activities.length > 8) {
+              this.activities = [...this.activityLog, ...this.allActivities].slice(0, 50);
+            } else {
+              window.electronAPI.navigate("tasks.html");
+            }
           },
           showAllMembers() {
             window.electronAPI.navigate("allUsers.html");

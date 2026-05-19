@@ -261,6 +261,11 @@ ipcMain.handle('get-my-join-requests', async (event, userId) => {
     catch (e) { console.error(e); return []; }
 });
 
+ipcMain.handle('get-assigned-tasks', async (event, userId) => {
+    try { return await apiFetch(`/api/tasks/assigned/${userId}`); }
+    catch (e) { console.error(e); return []; }
+});
+
 // ── Comments ──
 
 ipcMain.handle('get-task-comments', async (event, taskId) => {

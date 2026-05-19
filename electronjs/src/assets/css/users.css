@@ -284,6 +284,29 @@
   gap: 8px;
 }
 
+.detail-actions {
+  margin-top: 20px;
+}
+.btn-view-profile {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 10px;
+  background: #ff9838;
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: background 0.2s;
+}
+.btn-view-profile:hover {
+  background: #e8892e;
+}
+
 @media (max-width: 992px) {
   .users-split {
     flex-direction: column;

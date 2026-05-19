@@ -64,6 +64,15 @@
               <span><i class="bi bi-check2-square"></i> {{ proj.taskCount || 0 }} taches</span>
               <span><i class="bi bi-people"></i> {{ proj.memberCount || 0 }} membres</span>
             </div>
+            <div class="project-stats-dots" v-if="proj.isMember && proj.taskStats" style="opacity:0.6;">
+              <span
+                v-for="s in proj.taskStats"
+                :key="s.status"
+                class="stat-dot"
+                :style="{ background: s.color, width: s.pct + '%' }"
+                :title="s.status === 'todo' ? 'A faire' : s.status === 'in_progress' ? 'En cours' : 'Termine'"
+              ></span>
+            </div>
             <div v-if="!proj.isMember" class="project-card-actions">
               <button class="btn-join" @click.stop="requestJoin(proj)" :disabled="proj.requestSent">
                 {{ proj.requestSent ? "Demandee" : "Rejoindre" }}
@@ -133,20 +142,30 @@
               this.projects = await Promise.all(workspaces.map(async (ws) => {
                 const isMember = myWsIds.has(ws.id);
                 let memberCount = 0;
+                let wsTasks = [];
                 if (isMember) {
                   try {
                     const members = await window.electronAPI.getWorkspaceMembers(ws.id);
                     memberCount = members.length;
+                    wsTasks = await window.electronAPI.getWorkspaceTasks(ws.id) || [];
                   } catch {}
                 }
+                const taskCounts = { todo: 0, in_progress: 0, done: 0 };
+                wsTasks.forEach(t => { if (taskCounts[t.status] !== undefined) taskCounts[t.status]++; });
+                const total = wsTasks.length || 1;
                 return {
                   id: ws.id,
                   name: ws.name,
                   description: ws.description,
-                  taskCount: tasks.filter((t) => t.workspaceId === ws.id).length,
+                  taskCount: wsTasks.length,
                   memberCount,
                   isMember,
                   requestSent: false,
+                  taskStats: [
+                    { status: 'todo', pct: (taskCounts.todo / total) * 100, color: '#f59e0b' },
+                    { status: 'in_progress', pct: (taskCounts.in_progress / total) * 100, color: '#3b82f6' },
+                    { status: 'done', pct: (taskCounts.done / total) * 100, color: '#22c55e' },
+                  ],
                 };
               }));
             } catch (e) {

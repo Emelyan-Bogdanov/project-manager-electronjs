@@ -28,6 +28,7 @@ contextBridge.exposeInMainWorld('electronAPI', {
     getTaskComments: (taskId) => ipcRenderer.invoke('get-task-comments', taskId),
     addTaskComment: (taskId, userId, text) => ipcRenderer.invoke('add-task-comment', taskId, userId, text),
     incrementTaskView: (taskId) => ipcRenderer.invoke('increment-task-view', taskId),
+    getAssignedTasks: (userId) => ipcRenderer.invoke('get-assigned-tasks', userId),
     getUserStats: (userId) => ipcRenderer.invoke('get-user-stats', userId),
     getConfig: () => ipcRenderer.invoke('get-config'),
     saveConfig: (config) => ipcRenderer.invoke('save-config', config),

@@ -224,7 +224,7 @@ Vue.component("task-slide-panel", {
           <h3>{{ task ? task.title : 'Loading...' }}</h3>
           <div class="slide-panel-actions">
             <span v-if="saveError" class="save-error">{{ saveError }}</span>
-            <div class="move-menu-wrap" v-if="editing" style="position:relative;">
+            <div class="move-menu-wrap" style="position:relative;">
               <button class="slide-btn move-btn" @click.stop="showMoveMenu = !showMoveMenu">
                 <i class="bi bi-arrow-right"></i> Deplacer
               </button>
@@ -264,6 +264,10 @@ Vue.component("task-slide-panel", {
               <p>Task owner</p>
             </div>
             <span v-if="editing" class="editing-badge">Editing</span>
+          </div>
+          <div class="slide-assignee" v-if="task.assigneeName">
+            <i class="bi bi-person-check"></i>
+            Assignee: <strong>{{ task.assigneeName }}</strong>
           </div>
 
           <div class="slide-tags" v-if="task.tags && task.tags.length">

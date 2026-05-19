@@ -12,6 +12,10 @@ Vue.component("sidebar-member-item", {
     time : {
       type:String,
       default:"[default value]"
+    },
+    userId: {
+      type: [Number, String],
+      default: null
     }
   },
   data: function () {
@@ -24,9 +28,14 @@ Vue.component("sidebar-member-item", {
     initials(n) {
       return (n || "U").split(" ").filter(Boolean).slice(0, 2).map(p => p[0].toUpperCase()).join("");
     },
+    goToProfile() {
+      if (this.userId) {
+        window.electronAPI.navigate("profile.html?user=" + this.userId);
+      }
+    },
   },
   template: `
-    <div class="member-item">
+    <div class="member-item clicked" @click="goToProfile">
         <img v-if="url" :src='url' alt="" />
         <div v-else class="member-avatar-placeholder">{{ initials(name) }}</div>
         <div>

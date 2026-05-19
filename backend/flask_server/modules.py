@@ -147,6 +147,7 @@ class Task(db.Model) :
     comments = db.Column(db.Integer, default=0)
     deadline = db.Column(db.String(70) , nullable=False)
     authorId = db.Column(db.Integer)
+    assignedTo = db.Column(db.Integer, default=None)
     """ images paths are arrays , but stored as json dumped """
     images = db.Column(db.Text , default="[]")
     files = db.Column(db.Text, default="[]")
@@ -164,7 +165,7 @@ class Task(db.Model) :
             db.session.commit()
 
     @staticmethod
-    def add_task(title, tags, deadline, authorId, description="", urls="[]", images="[]", files="[]", taskType="basic", priority=1, status="todo", workspaceId=None, reminder=""):
+    def add_task(title, tags, deadline, authorId, description="", urls="[]", images="[]", files="[]", taskType="basic", priority=1, status="todo", workspaceId=None, reminder="", assignedTo=None):
         from datetime import datetime
         task = Task(
             title=title,
@@ -174,6 +175,7 @@ class Task(db.Model) :
             urls=urls,
             deadline=deadline,
             authorId=authorId,
+            assignedTo=assignedTo,
             images=images,
             files=files,
             priority=priority,

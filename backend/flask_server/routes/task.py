@@ -18,6 +18,7 @@ def parse_json_field(raw):
 
 def task_to_dict(task):
     author = User.query.get(task.authorId) if task.authorId else None
+    assignee = User.query.get(task.assignedTo) if task.assignedTo else None
     workspace = Workspace.query.get(task.workspaceId) if task.workspaceId else None
     return {
         "id": task.id,
@@ -33,6 +34,9 @@ def task_to_dict(task):
         "authorName": (author.name or author.username) if author else "Utilisateur",
         "authorUsername": author.username if author else "",
         "authorAvatar": author.avatar if author else "",
+        "assignedTo": task.assignedTo,
+        "assigneeName": (assignee.name or assignee.username) if assignee else None,
+        "assigneeAvatar": assignee.avatar if assignee else None,
         "views": task.views or 0,
         "comments": task.comments or 0,
         "status": task.status,
@@ -96,7 +100,8 @@ def add_task():
         priority=data.get("priority", 1),
         status=data.get("status", "todo"),
         workspaceId=data.get("workspaceId"),
-        reminder=data.get("reminder")
+        reminder=data.get("reminder"),
+        assignedTo=data.get("assignedTo")
     )
     return jsonify({"id": task.id, "task": task_to_dict(task), "message": "Task added"})
 
@@ -106,6 +111,11 @@ def task_info(task_id):
     if not task:
         return jsonify({"error": "Task not found"}), 404
     return jsonify(task_to_dict(task))
+
+@task_bp.route("/api/tasks/assigned/<int:user_id>")
+def assigned_tasks(user_id):
+    tasks = Task.query.filter_by(assignedTo=user_id).all()
+    return jsonify([task_to_dict(t) for t in tasks])
 
 @task_bp.route("/api/tasks/<int:task_id>/view", methods=["POST"])
 def increment_view(task_id):

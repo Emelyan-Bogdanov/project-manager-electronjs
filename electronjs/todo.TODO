@@ -11,6 +11,7 @@
 
 - a project owner, can assign a task to a user, and add a button in the left menu, where contains list of assigned tasks to the current user
 - when show a list of projects, show (with 0.6 opacity) project statistiques , like a line of 3 dots , each dot represents the stats for tasks category, 
+- make the text editor for the task , more fullscreen (of cousrse with a return button top left to minimise the  editor) , and make it more customisable
 ----- advanced ----------
 Project Creation & Management
     Create new projects with basic info (name, description, start/end date)

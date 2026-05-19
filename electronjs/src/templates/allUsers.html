@@ -93,6 +93,11 @@
                   <span class="tag" v-for="tag in selectedUser.tags">{{ tag }}</span>
                 </div>
               </div>
+              <div class="detail-actions">
+                <button class="btn-view-profile" @click="viewProfile(selectedUser)">
+                  <i class="bi bi-person"></i> Voir le profil
+                </button>
+              </div>
             </div>
           </div>
 
@@ -169,6 +174,9 @@
               }
             }
             return [];
+          },
+          viewProfile(user) {
+            window.electronAPI.navigate("profile.html?user=" + user.id);
           },
           getAvatarUrl() {
             return "";

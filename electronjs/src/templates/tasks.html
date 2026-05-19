@@ -95,6 +95,7 @@
               :comments-count="task.commentsCount"
               :urls="task.urls"
               :author="task.author"
+              :assignee-name="task.assigneeName || ''"
               :image="task.image"
               @select="openTask(task.id)"
               @tag-click="filterByTag"
@@ -169,6 +170,13 @@
               </select>
             </div>
             <div class="form-group">
+              <label>Assignee</label>
+              <select v-model="newTask.assignedTo">
+                <option :value="null">Non assignee</option>
+                <option v-for="u in users" :key="u.id" :value="u.id">{{ u.name || u.username }}</option>
+              </select>
+            </div>
+            <div class="form-group">
               <label>Tags (separes par des virgules)</label>
               <input type="text" v-model="newTask.tagsInput" placeholder="ex: Frontend, UI, React" />
             </div>
@@ -210,6 +218,7 @@
           status: "todo",
           priority: 1,
           workspaceId: "",
+          assignedTo: null,
           reminder: "",
           tagsInput: "",
           urlsInput: "",
@@ -296,6 +305,14 @@
               this.selectedTag = tag;
               this.showFilters = true;
             }
+            const assigned = params.get("assigned");
+            if (assigned === "1") {
+              const session = await window.electronAPI.checkSession();
+              if (session.loggedIn && session.user) {
+                this.selectedUser = session.user.id;
+                this.showFilters = true;
+              }
+            }
           },
         methods: {
           async fetchTasks() {
@@ -314,9 +331,10 @@
                 authorId: t.authorId,
                 status: t.status || "todo",
                 image: (t.images && t.images.length > 0) ? (t.images[0].url || t.images[0]) : "",
-                urls: t.authorAvatar ? [t.authorAvatar] : [],
+                urls: t.urls || [],
                 workspaceId: t.workspaceId,
                 workspaceName: t.workspaceName || "",
+                assigneeName: t.assigneeName || "",
                 created_at: t.created_at || "",
               }));
             } catch (e) {
@@ -397,6 +415,7 @@
               authorId,
               workspaceId: this.newTask.workspaceId,
               reminder: this.newTask.reminder,
+              assignedTo: this.newTask.assignedTo,
             });
             if (result.error) { alert(result.error); return; }
             this.showTaskModal = false;
@@ -410,8 +429,12 @@
           },
           plainText(desc) {
             if (!desc) return "";
+            let raw = desc;
+            if (typeof raw !== "string") {
+              try { raw = JSON.stringify(raw); } catch { return String(raw); }
+            }
             try {
-              const blocks = JSON.parse(desc);
+              const blocks = JSON.parse(raw);
               if (Array.isArray(blocks)) {
                 return blocks.map(b => {
                   if (b.type === "text") {
@@ -425,7 +448,7 @@
               }
             } catch {}
             const div = document.createElement("div");
-            div.innerHTML = desc;
+            div.innerHTML = raw;
             return div.textContent || div.innerText || "";
           },
           clearFilters() {

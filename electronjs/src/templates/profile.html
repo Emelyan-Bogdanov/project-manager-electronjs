@@ -48,9 +48,12 @@
                   <span><i class="bi bi-calendar3"></i> Membre</span>
                 </div>
               </div>
-              <button v-if="!editing && isOwnProfile" class="edit-profile-btn" @click="startEditing">
-                <i class="bi bi-pencil"></i> Modifier
-              </button>
+              <div class="profile-actions-wrap">
+                <span v-if="!isOwnProfile" class="viewing-badge"><i class="bi bi-eye"></i> Consultation du profil</span>
+                <button v-if="!editing && isOwnProfile" class="edit-profile-btn" @click="startEditing">
+                  <i class="bi bi-pencil"></i> Modifier
+                </button>
+              </div>
             </div>
           </div>
 

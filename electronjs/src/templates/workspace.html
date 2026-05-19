@@ -120,6 +120,7 @@
               :comments-count="task.commentsCount"
               :urls="task.urls"
               :author="task.author"
+              :assignee-name="task.assigneeName || ''"
               :image="task.images && task.images[0] ? (task.images[0].url || task.images[0]) : ''"
               @select="openTask(task.id)"
               @tag-click="filterByTag"
@@ -245,6 +246,13 @@
             <div class="form-group">
               <label>Rappel <span class="text-danger">*</span></label>
               <input type="datetime-local" v-model="newTask.reminder" required />
+            </div>
+            <div class="form-group">
+              <label>Assignee</label>
+              <select v-model="newTask.assignedTo">
+                <option :value="null">Non assignee</option>
+                <option v-for="m in members" :key="m.id" :value="m.id">{{ m.name }}</option>
+              </select>
             </div>
             <div class="form-group">
               <label>Tags (separes par des virgules)</label>
@@ -570,6 +578,7 @@
           status: "todo",
           priority: 1,
           reminder: "",
+          assignedTo: null,
           tagsInput: "",
           urlsInput: "",
           images: [],
@@ -784,6 +793,7 @@
               authorId,
               workspaceId: this.workspaceId,
               reminder: this.newTask.reminder,
+              assignedTo: this.newTask.assignedTo,
             });
             if (result.error) { alert(result.error); return; }
             this.showTaskModal = false;
@@ -797,8 +807,12 @@
           },
           plainText(desc) {
             if (!desc) return "";
+            let raw = desc;
+            if (typeof raw !== "string") {
+              try { raw = JSON.stringify(raw); } catch { return String(raw); }
+            }
             try {
-              const blocks = JSON.parse(desc);
+              const blocks = JSON.parse(raw);
               if (Array.isArray(blocks)) {
                 return blocks.map(b => {
                   if (b.type === "text") {
@@ -812,7 +826,7 @@
               }
             } catch {}
             const div = document.createElement("div");
-            div.innerHTML = desc;
+            div.innerHTML = raw;
             return div.textContent || div.innerText || "";
           },
           async fetchFiles() {

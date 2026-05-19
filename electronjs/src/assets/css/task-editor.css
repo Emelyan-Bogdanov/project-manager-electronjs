@@ -159,6 +159,19 @@
   color: #7b7d85;
 }
 
+.slide-assignee {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: #7b7d85;
+  margin-bottom: 14px;
+  padding: 6px 12px;
+  background: #f4f5f8;
+  border-radius: 8px;
+}
+.slide-assignee i { color: #ff9838; }
+
 .editing-badge {
   margin-left: auto;
   background: #e8faf5;
@@ -257,6 +270,12 @@
   outline: none;
   min-height: 1.5em;
   direction: ltr;
+}
+
+[contenteditable="true"] {
+  direction: ltr !important;
+  text-align: left !important;
+  unicode-bidi: plaintext;
 }
 
 .text-content:empty:before {

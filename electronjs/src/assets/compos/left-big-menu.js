@@ -10,12 +10,15 @@ Vue.component("left-big-menu", {
     return {
       members: [],
       hasProjects: false,
+      assignedCount: 0,
+      userId: null,
     };
   },
   async mounted() {
     try {
       const session = await window.electronAPI.checkSession();
       const userId = session.loggedIn && session.user ? session.user.id : null;
+      this.userId = userId;
       if (userId) {
         const myWs = await window.electronAPI.getMyWorkspaces(userId) || [];
         this.hasProjects = myWs.length > 0;
@@ -33,7 +36,11 @@ Vue.component("left-big-menu", {
           id: m.id,
           name: m.name,
           url: m.avatar || "",
+          userId: m.id,
         }));
+
+        const assigned = await window.electronAPI.getAssignedTasks(userId) || [];
+        this.assignedCount = assigned.length;
       }
     } catch (e) {
       console.error("Error loading sidebar:", e);
@@ -65,6 +72,13 @@ Vue.component("left-big-menu", {
         biclass="bi-check2-square"
         span-text="Tâches"
         url="tasks.html"
+      ></side-menu-button>
+
+      <side-menu-button v-if="userId"
+        biclass="bi-person-check"
+        :count="String(assignedCount)"
+        span-text="Assignées"
+        url="tasks.html?assigned=1"
       ></side-menu-button>
 
       <side-menu-button
@@ -115,6 +129,7 @@ Vue.component("left-big-menu", {
           :key="m.id"
           :url="m.url"
           :name="m.name"
+          :user-id="m.userId"
         ></sidebar-member-item>
         <div v-if="!members.length" style="color:rgba(255,255,255,0.4);font-size:12px;padding:8px 16px;text-align:center;">
           Aucun membre

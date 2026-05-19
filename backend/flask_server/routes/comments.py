@@ -34,6 +34,6 @@ def add_comment(task_id):
     if not task:
         return jsonify({"error": "Tache introuvable"}), 404
     Comment.add(task_id, user_id, text)
-    task.views = (task.views or 0) + 1
     db.session.commit()
+    task = Task.query.get(task_id)
     return jsonify({"success": True, "message": "Commentaire ajoute", "comments": task.comments or 0})

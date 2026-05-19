@@ -115,3 +115,19 @@
   background: #ccc;
   cursor: not-allowed;
 }
+
+.project-stats-dots {
+  display: flex;
+  gap: 4px;
+  margin-top: 10px;
+  height: 8px;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #f0f0f0;
+}
+.stat-dot {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.3s ease;
+  min-width: 4px;
+}
