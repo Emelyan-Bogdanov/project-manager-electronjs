@@ -14,11 +14,6 @@
   </head>
   <body>
     <div class="auth-container" id="app">
-      <div class="auth-logo">
-        <div class="logo-circle"></div>
-        <h4>ProjectManager</h4>
-      </div>
-
       <div class="auth-title">
         {{ step === 'account' ? 'Inscription' : 'Votre profil' }}
       </div>
@@ -49,7 +44,9 @@
               :class="{ 'is-invalid': usernameTaken }"
               required
             />
-            <small v-if="usernameTaken" class="field-error">Ce nom d'utilisateur est deja pris</small>
+            <small v-if="usernameTaken" class="field-error"
+              >Ce nom d'utilisateur est deja pris</small
+            >
           </div>
           <div class="form-group">
             <label for="email">Email</label>
@@ -62,7 +59,9 @@
               :class="{ 'is-invalid': emailTaken }"
               required
             />
-            <small v-if="emailTaken" class="field-error">Cet email est deja utilise</small>
+            <small v-if="emailTaken" class="field-error"
+              >Cet email est deja utilise</small
+            >
           </div>
           <div class="form-group">
             <label for="password">Mot de passe</label>
@@ -182,22 +181,30 @@
             if (!this.usersCache) {
               try {
                 this.usersCache = await window.electronAPI.getUsers();
-              } catch { this.usersCache = []; }
+              } catch {
+                this.usersCache = [];
+              }
             }
             return this.usersCache;
           },
           async checkUsername() {
-            if (!this.username) { this.usernameTaken = false; return; }
+            if (!this.username) {
+              this.usernameTaken = false;
+              return;
+            }
             const users = await this.loadUsers();
             this.usernameTaken = users.some(
-              (u) => u.username.toLowerCase() === this.username.toLowerCase()
+              (u) => u.username.toLowerCase() === this.username.toLowerCase(),
             );
           },
           async checkEmail() {
-            if (!this.email) { this.emailTaken = false; return; }
+            if (!this.email) {
+              this.emailTaken = false;
+              return;
+            }
             const users = await this.loadUsers();
             this.emailTaken = users.some(
-              (u) => u.email.toLowerCase() === this.email.toLowerCase()
+              (u) => u.email.toLowerCase() === this.email.toLowerCase(),
             );
           },
           async signup() {

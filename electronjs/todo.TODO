@@ -8,3 +8,93 @@
 - while editing the text or adding a text block to the task, the text goes from right to left (inversed).
 - the task of a project , should contains the right numbers , of views & comments
 -[DO NOT DO] add light/dark time + 4 other themes.
+
+- a project owner, can assign a task to a user, and add a button in the left menu, where contains list of assigned tasks to the current user
+- when show a list of projects, show (with 0.6 opacity) project statistiques , like a line of 3 dots , each dot represents the stats for tasks category, 
+----- advanced ----------
+Project Creation & Management
+    Create new projects with basic info (name, description, start/end date)
+    View all projects in a dashboard
+    Edit and delete projects
+    Set project status (active, completed, on-hold)
+
+    2. Task Management
+
+        Create tasks within projects
+        Assign tasks to team members
+        Set task priorities (high, medium, low)
+        Add due dates
+        Mark tasks as complete/incomplete
+        View task status at a glance
+
+    3. Team & Resource Management
+
+        Add team members to projects
+        Assign tasks to specific people
+        View who is doing what
+        Basic workload visibility
+
+    4. Simple Scheduling
+
+        Gantt chart view (visual timeline)
+        Task dependencies (Task A → Task B)
+        Automatic deadline calculations
+        Start/end dates for tasks
+
+    5. Progress Tracking
+
+        % completion indicator
+        Mark tasks as done
+        See overall project progress
+        Quick status updates
+
+    6. Notifications & Reminders
+
+        Task due date alerts
+        Deadline reminders
+        Assignment notifications
+        Activity feed/log
+
+        Secondary Features (Add Later)
+    7. Collaboration
+
+        Comments on tasks
+        File attachments
+        Activity history
+        Notes/descriptions
+
+    8. Reporting & Analytics
+
+        Project overview dashboard
+        Team workload report
+        Timeline view
+        Completion metrics
+
+    9. Filters & Search
+
+        Filter by status, priority, assignee
+        Search tasks
+        Custom views
+
+    10. User Management
+
+        User roles (admin, manager, team member)
+        Permissions
+        User invitations
+
+        Nice-to-Have (Advanced)
+
+        Budget tracking
+        Time logging/timesheets
+        Resource allocation
+        Custom fields
+        Integrations (Slack, email, calendar)
+        Mobile app
+        Export to PDF/Excel
+
+        Design Recommendations
+    Start Simple:
+
+        Focus on tasks and projects first
+        Make the UI clean and intuitive
+        Avoid cluttering with too many options
