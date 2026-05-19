@@ -27,61 +27,63 @@
       <div class="error-msg" :class="{ show: error }">{{ error }}</div>
 
       <form v-if="step === 'account'" @submit.prevent="signup">
-        <div class="form-group">
-          <label for="name">Nom complet</label>
-          <input
-            type="text"
-            id="name"
-            v-model="name"
-            placeholder="Entrez votre nom complet"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label for="username">Nom d'utilisateur</label>
-          <input
-            type="text"
-            id="username"
-            v-model="username"
-            @blur="checkUsername"
-            placeholder="Choisissez un nom d'utilisateur"
-            :class="{ 'is-invalid': usernameTaken }"
-            required
-          />
-          <small v-if="usernameTaken" class="field-error">Ce nom d'utilisateur est deja pris</small>
-        </div>
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input
-            type="email"
-            id="email"
-            v-model="email"
-            @blur="checkEmail"
-            placeholder="Entrez votre email"
-            :class="{ 'is-invalid': emailTaken }"
-            required
-          />
-          <small v-if="emailTaken" class="field-error">Cet email est deja utilise</small>
-        </div>
-        <div class="form-group">
-          <label for="password">Mot de passe</label>
-          <input
-            type="password"
-            id="password"
-            v-model="password"
-            placeholder="Minimum 6 caracteres"
-            required
-          />
-        </div>
-        <div class="form-group">
-          <label for="confirmPassword">Confirmer le mot de passe</label>
-          <input
-            type="password"
-            id="confirmPassword"
-            v-model="confirmPassword"
-            placeholder="Repetez le mot de passe"
-            required
-          />
+        <div class="auth-form-grid">
+          <div class="form-group">
+            <label for="name">Nom complet</label>
+            <input
+              type="text"
+              id="name"
+              v-model="name"
+              placeholder="Entrez votre nom complet"
+              required
+            />
+          </div>
+          <div class="form-group">
+            <label for="username">Nom d'utilisateur</label>
+            <input
+              type="text"
+              id="username"
+              v-model="username"
+              @blur="checkUsername"
+              placeholder="Choisissez un nom d'utilisateur"
+              :class="{ 'is-invalid': usernameTaken }"
+              required
+            />
+            <small v-if="usernameTaken" class="field-error">Ce nom d'utilisateur est deja pris</small>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input
+              type="email"
+              id="email"
+              v-model="email"
+              @blur="checkEmail"
+              placeholder="Entrez votre email"
+              :class="{ 'is-invalid': emailTaken }"
+              required
+            />
+            <small v-if="emailTaken" class="field-error">Cet email est deja utilise</small>
+          </div>
+          <div class="form-group">
+            <label for="password">Mot de passe</label>
+            <input
+              type="password"
+              id="password"
+              v-model="password"
+              placeholder="Minimum 6 caracteres"
+              required
+            />
+          </div>
+          <div class="form-group full-width">
+            <label for="confirmPassword">Confirmer le mot de passe</label>
+            <input
+              type="password"
+              id="confirmPassword"
+              v-model="confirmPassword"
+              placeholder="Repetez le mot de passe"
+              required
+            />
+          </div>
         </div>
         <button type="submit" class="btn-signup" :disabled="loading">
           <span v-if="loading">Inscription...</span>
@@ -90,36 +92,42 @@
       </form>
 
       <form v-else @submit.prevent="saveProfile">
-        <img :src="profilePreview" alt="" class="profile-preview" />
-        <div class="form-group">
-          <label for="avatar">Photo de profil</label>
-          <input
-            type="file"
-            id="avatar"
-            accept="image/*"
-            @change="selectAvatar"
-          />
-        </div>
-        <div class="form-group">
-          <label for="location">Ville / localisation</label>
-          <input
-            type="text"
-            id="location"
-            v-model="location"
-            placeholder="Ex: Casablanca"
-          />
-        </div>
-        <div class="form-group">
-          <label for="tags">Competences</label>
-          <input
-            type="text"
-            id="tags"
-            v-model="tagsInput"
-            placeholder="Ex: Frontend, UI/UX, Flask"
-          />
-        </div>
-        <div class="tag-preview" v-if="tags.length">
-          <span v-for="tag in tags" :key="tag">{{ tag }}</span>
+        <div class="profile-form-row">
+          <div class="profile-avatar-section">
+            <img :src="profilePreview" alt="" class="profile-preview" />
+            <div class="form-group">
+              <label for="avatar">Photo de profil</label>
+              <input
+                type="file"
+                id="avatar"
+                accept="image/*"
+                @change="selectAvatar"
+              />
+            </div>
+          </div>
+          <div class="profile-fields-section">
+            <div class="form-group">
+              <label for="location">Ville / localisation</label>
+              <input
+                type="text"
+                id="location"
+                v-model="location"
+                placeholder="Ex: Casablanca"
+              />
+            </div>
+            <div class="form-group">
+              <label for="tags">Competences</label>
+              <input
+                type="text"
+                id="tags"
+                v-model="tagsInput"
+                placeholder="Ex: Frontend, UI/UX, Flask"
+              />
+            </div>
+            <div class="tag-preview" v-if="tags.length">
+              <span v-for="tag in tags" :key="tag">{{ tag }}</span>
+            </div>
+          </div>
         </div>
         <button type="submit" class="btn-signup" :disabled="loading">
           <span v-if="loading">Enregistrement...</span>

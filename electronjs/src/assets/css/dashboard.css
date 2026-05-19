@@ -260,13 +260,23 @@
 }
 
 .modal-box.dashboard-modal {
-  padding: 7px;
+  padding: 24px;
   height: auto;
-  width: 300px;
+  width: 520px;
   display: flex;
   flex-direction: column;
   align-items: center;
   background: var(--bs-body-bg);
+}
+
+.modal-form-row {
+  display: flex;
+  gap: 16px;
+  width: 100%;
+}
+
+.modal-form-row .form-group {
+  flex: 1;
 }
 
 .modal-box.dashboard-modal h4 {

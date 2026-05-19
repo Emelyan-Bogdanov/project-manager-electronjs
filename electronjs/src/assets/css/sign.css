@@ -13,8 +13,36 @@ body {
   padding: 36px;
   border-radius: 20px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
-  width: 430px;
+  width: 680px;
   max-width: 100%;
+}
+
+.auth-form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+
+.auth-form-grid .form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.profile-form-row {
+  display: flex;
+  gap: 24px;
+  align-items: flex-start;
+}
+
+.profile-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  min-width: 140px;
+}
+
+.profile-fields-section {
+  flex: 1;
 }
 .auth-logo {
   display: flex;
@@ -125,8 +153,6 @@ body {
   height: 86px;
   border-radius: 50%;
   object-fit: cover;
-  display: block;
-  margin: 0 auto 18px;
   border: 3px solid #ff9838;
 }
 .tag-preview {
