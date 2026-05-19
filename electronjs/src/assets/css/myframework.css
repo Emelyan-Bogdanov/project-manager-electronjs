@@ -462,6 +462,10 @@ body {
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 10px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .task-text {

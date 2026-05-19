@@ -30,6 +30,7 @@ class Workspace(db.Model) :
     name = db.Column(db.String(100), unique=True, nullable=False)
     description = db.Column(db.Text , nullable=False)
     iconPath = db.Column(db.String(300) , default="[NO IMAGE]")
+    ownerId = db.Column(db.Integer, default=None)
 
     @staticmethod
     def create_synthetic(db,count=5):
@@ -38,11 +39,12 @@ class Workspace(db.Model) :
            db.session.commit()
 
     @staticmethod
-    def add_workspace(name, description, iconPath="[NO IMAGE]"):
+    def add_workspace(name, description, iconPath="[NO IMAGE]", ownerId=None):
         workspace = Workspace(
             name=name,
             description=description,
-            iconPath=iconPath
+            iconPath=iconPath,
+            ownerId=ownerId
         )
         db.session.add(workspace)
         db.session.commit()
@@ -70,6 +72,66 @@ class Workspace(db.Model) :
             db.session.commit()
         return workspace
 
+
+class WorkspaceMember(db.Model):
+    __tablename__ = "workspace_members"
+    id = db.Column(db.Integer, primary_key=True)
+    workspaceId = db.Column(db.Integer, nullable=False)
+    userId = db.Column(db.Integer, nullable=False)
+
+    @staticmethod
+    def add_member(workspaceId, userId):
+        existing = WorkspaceMember.query.filter_by(workspaceId=workspaceId, userId=userId).first()
+        if existing:
+            return existing
+        m = WorkspaceMember(workspaceId=workspaceId, userId=userId)
+        db.session.add(m)
+        db.session.commit()
+        return m
+
+    @staticmethod
+    def remove_member(workspaceId, userId):
+        m = WorkspaceMember.query.filter_by(workspaceId=workspaceId, userId=userId).first()
+        if m:
+            db.session.delete(m)
+            db.session.commit()
+        return m
+
+class JoinRequest(db.Model):
+    __tablename__ = "join_requests"
+    id = db.Column(db.Integer, primary_key=True)
+    workspaceId = db.Column(db.Integer, nullable=False)
+    userId = db.Column(db.Integer, nullable=False)
+    status = db.Column(db.String(20), default="pending")
+    created_at = db.Column(db.String(30), default="")
+
+    @staticmethod
+    def send(workspaceId, userId):
+        from datetime import datetime
+        existing = JoinRequest.query.filter_by(workspaceId=workspaceId, userId=userId, status="pending").first()
+        if existing:
+            return existing
+        r = JoinRequest(workspaceId=workspaceId, userId=userId, status="pending", created_at=datetime.now().isoformat())
+        db.session.add(r)
+        db.session.commit()
+        return r
+
+    @staticmethod
+    def approve(request_id):
+        r = JoinRequest.query.get(request_id)
+        if r and r.status == "pending":
+            r.status = "approved"
+            WorkspaceMember.add_member(r.workspaceId, r.userId)
+            db.session.commit()
+        return r
+
+    @staticmethod
+    def reject(request_id):
+        r = JoinRequest.query.get(request_id)
+        if r and r.status == "pending":
+            r.status = "rejected"
+            db.session.commit()
+        return r
 
 class Task(db.Model) : 
     id = db.Column(db.Integer, primary_key=True)

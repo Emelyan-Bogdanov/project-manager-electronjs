@@ -181,16 +181,19 @@
           newProject: { name: "", description: "" },
           projectLoading: false,
           projectError: "",
+          session: null,
         },
         async mounted() {
+          this.session = (await window.electronAPI.checkSession()) || { loggedIn: false };
           await this.loadStats();
         },
         methods: {
           async loadStats() {
+            const userId = this.session.loggedIn && this.session.user ? this.session.user.id : null;
             const results = await Promise.allSettled([
               window.electronAPI.getUsers(),
               window.electronAPI.getTasks(),
-              window.electronAPI.getWorkspaces(),
+              userId ? window.electronAPI.getMyWorkspaces(userId) : window.electronAPI.getWorkspaces(),
               window.electronAPI.getFiles(),
             ]);
 
@@ -265,6 +268,7 @@
               const result = await window.electronAPI.createWorkspace({
                 name: this.newProject.name,
                 description: this.newProject.description || "Aucune description",
+                ownerId: this.session.loggedIn && this.session.user ? this.session.user.id : null,
               });
               if (result && result.error) {
                 this.projectError = result.error;

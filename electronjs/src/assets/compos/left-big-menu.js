@@ -17,7 +17,7 @@ Vue.component("left-big-menu", {
       this.members = users.map(u => ({
         id: u.id,
         name: u.name || u.username,
-        url: u.avatar || `https://ui-avatars.com/api/?name=${encodeURIComponent(u.name || u.username)}&background=f97316&color=fff`,
+        url: u.avatar || "",
       }));
     } catch (e) {
       console.error("Error loading sidebar members:", e);
@@ -49,6 +49,12 @@ Vue.component("left-big-menu", {
         biclass="bi-check2-square"
         span-text="Tâches"
         url="tasks.html"
+      ></side-menu-button>
+
+      <side-menu-button
+        biclass="bi-envelope"
+        span-text="Requetes"
+        url="requests.html"
       ></side-menu-button>
 
       <sidebar-section-header :has-plus="false"></sidebar-section-header>

@@ -159,6 +159,17 @@ ipcMain.handle('update-task', async (event, id, data) => {
     }
 });
 
+ipcMain.handle('delete-task', async (event, id, userId) => {
+    try {
+        return await apiFetch(`/task/${id}`, {
+            method: 'DELETE',
+            body: JSON.stringify({ userId }),
+        });
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});
+
 ipcMain.handle('create-workspace', async (event, data) => {
     try {
         return await apiFetch('/addworkspace', {
@@ -168,6 +179,81 @@ ipcMain.handle('create-workspace', async (event, data) => {
     } catch (e) {
         return { success: false, error: e.message };
     }
+});
+
+ipcMain.handle('get-my-workspaces', async (event, userId) => {
+    try { return await apiFetch(`/api/workspaces/mine?userId=${userId}`); }
+    catch (e) { console.error(e); return []; }
+});
+
+ipcMain.handle('get-workspace-members', async (event, workspaceId) => {
+    try { return await apiFetch(`/api/workspaces/${workspaceId}/members`); }
+    catch (e) { console.error(e); return []; }
+});
+
+ipcMain.handle('add-workspace-member', async (event, workspaceId, userId, requesterId) => {
+    try {
+        return await apiFetch(`/api/workspaces/${workspaceId}/members`, {
+            method: 'POST',
+            body: JSON.stringify({ userId, requesterId }),
+        });
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});
+
+ipcMain.handle('remove-workspace-member', async (event, workspaceId, userId, requesterId) => {
+    try {
+        return await apiFetch(`/api/workspaces/${workspaceId}/members/${userId}`, {
+            method: 'DELETE',
+            body: JSON.stringify({ requesterId }),
+        });
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});
+
+ipcMain.handle('send-join-request', async (event, workspaceId, userId) => {
+    try {
+        return await apiFetch(`/api/workspaces/${workspaceId}/join-requests`, {
+            method: 'POST',
+            body: JSON.stringify({ userId }),
+        });
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});
+
+ipcMain.handle('get-join-requests', async (event, workspaceId, userId) => {
+    try { return await apiFetch(`/api/workspaces/${workspaceId}/join-requests?userId=${userId}`); }
+    catch (e) { console.error(e); return []; }
+});
+
+ipcMain.handle('approve-join-request', async (event, requestId, userId) => {
+    try {
+        return await apiFetch(`/api/join-requests/${requestId}/approve`, {
+            method: 'POST',
+            body: JSON.stringify({ userId }),
+        });
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});
+
+ipcMain.handle('reject-join-request', async (event, requestId, userId) => {
+    try {
+        return await apiFetch(`/api/join-requests/${requestId}/reject`, {
+            method: 'POST',
+            body: JSON.stringify({ userId }),
+        });
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});
+
+ipcMain.handle('get-my-join-requests', async (event, userId) => {
+    try { return await apiFetch(`/api/users/${userId}/join-requests`); }
+    catch (e) { console.error(e); return []; }
 });
 
 // ── Image Storage (handled via direct fetch in renderer) ──

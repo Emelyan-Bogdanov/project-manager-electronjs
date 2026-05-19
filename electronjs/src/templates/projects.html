@@ -52,16 +52,22 @@
             v-for="(proj, i) in projects"
             :key="proj.id"
             class="project-card-large"
-            @click="goToProject(proj.id)"
+            :class="{ 'project-locked': !proj.isMember }"
+            @click="proj.isMember && goToProject(proj.id)"
           >
             <div class="project-card-icon" :style="{ background: colors[i % colors.length] }">
-              <i class="bi bi-folder"></i>
+              <i class="bi" :class="proj.isMember ? 'bi-folder' : 'bi-lock'"></i>
             </div>
             <h4 class="project-card-name">{{ proj.name }}</h4>
             <p class="project-card-desc">{{ proj.description || "Aucune description" }}</p>
             <div class="project-card-stats">
               <span><i class="bi bi-check2-square"></i> {{ proj.taskCount || 0 }} taches</span>
-              <span><i class="bi bi-people"></i> {{ proj.members || 0 }} membres</span>
+              <span><i class="bi bi-people"></i> {{ proj.memberCount || 0 }} membres</span>
+            </div>
+            <div v-if="!proj.isMember" class="project-card-actions">
+              <button class="btn-join" @click.stop="requestJoin(proj)" :disabled="proj.requestSent">
+                {{ proj.requestSent ? "Demandee" : "Rejoindre" }}
+              </button>
             </div>
           </div>
         </div>
@@ -107,24 +113,41 @@
           projectError: "",
           newProject: { name: "", description: "" },
           colors: ["#ff9838", "#2ecc71", "#3498db", "#e74c3c", "#9b59b6", "#1abc9c"],
+          session: null,
         },
         async mounted() {
+          this.session = (await window.electronAPI.checkSession()) || { loggedIn: false };
           await this.fetchProjects();
         },
         methods: {
           async fetchProjects() {
             this.loading = true;
             try {
-              const [workspaces, tasks] = await Promise.all([
+              const userId = this.session.loggedIn && this.session.user ? this.session.user.id : null;
+              const [workspaces, tasks, myWorkspaces] = await Promise.all([
                 window.electronAPI.getWorkspaces(),
                 window.electronAPI.getTasks(),
+                userId ? window.electronAPI.getMyWorkspaces(userId) : Promise.resolve([]),
               ]);
-              this.projects = workspaces.map((ws) => ({
-                id: ws.id,
-                name: ws.name,
-                description: ws.description,
-                taskCount: tasks.filter((t) => t.workspaceId === ws.id).length,
-                members: 0,
+              const myWsIds = new Set((myWorkspaces || []).map(w => w.id));
+              this.projects = await Promise.all(workspaces.map(async (ws) => {
+                const isMember = myWsIds.has(ws.id);
+                let memberCount = 0;
+                if (isMember) {
+                  try {
+                    const members = await window.electronAPI.getWorkspaceMembers(ws.id);
+                    memberCount = members.length;
+                  } catch {}
+                }
+                return {
+                  id: ws.id,
+                  name: ws.name,
+                  description: ws.description,
+                  taskCount: tasks.filter((t) => t.workspaceId === ws.id).length,
+                  memberCount,
+                  isMember,
+                  requestSent: false,
+                };
               }));
             } catch (e) {
               console.error("Error fetching projects:", e);
@@ -146,9 +169,12 @@
             this.projectError = "";
             this.projectLoading = true;
             try {
+              const session = this.session;
+              const ownerId = session.loggedIn && session.user ? session.user.id : null;
               const result = await window.electronAPI.createWorkspace({
                 name: this.newProject.name,
                 description: this.newProject.description || "Aucune description",
+                ownerId,
               });
               if (result && result.error) {
                 this.projectError = result.error;
@@ -161,6 +187,20 @@
               console.error(e);
             } finally {
               this.projectLoading = false;
+            }
+          },
+          async requestJoin(proj) {
+            const userId = this.session.loggedIn && this.session.user ? this.session.user.id : null;
+            if (!userId) return;
+            try {
+              const result = await window.electronAPI.sendJoinRequest(proj.id, userId);
+              if (result && !result.error) {
+                proj.requestSent = true;
+              } else {
+                alert(result.error || "Erreur");
+              }
+            } catch (e) {
+              console.error(e);
             }
           },
         },

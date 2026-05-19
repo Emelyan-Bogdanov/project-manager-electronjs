@@ -77,6 +77,15 @@
   cursor: not-allowed;
 }
 
+.delete-btn {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.delete-btn:hover {
+  background: #fecaca;
+}
+
 /* ── Panel Body ── */
 .slide-panel-body {
   flex: 1;

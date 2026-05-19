@@ -1,0 +1,223 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Requetes</title>
+    <link rel="stylesheet" href="../assets/css/all.css" />
+    <link rel="stylesheet" href="../assets/css/index.css" />
+    <link rel="stylesheet" href="../assets/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="../assets/css/myframework.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <script src="../assets/compos/menu-button.js"></script>
+    <script src="../assets/compos/sidebar-section-header.js"></script>
+    <script src="../assets/compos/sidebar-member-item.js"></script>
+    <script src="../assets/compos/comp-logo.js"></script>
+    <script src="../assets/compos/left-big-menu.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
+    />
+  </head>
+  <body>
+    <div class="dashboard-wrapper d-flex" id="app">
+      <aside class="sidebar">
+        <left-big-menu></left-big-menu>
+      </aside>
+
+      <main class="main-content" style="padding: 28px 36px;">
+        <div class="topbar">
+          <div class="topbar-left">
+            <h3 class="mb-0">Requetes</h3>
+          </div>
+        </div>
+
+        <div class="requests-tabs">
+          <button :class="{ active: tab === 'received' }" @click="tab = 'received'">Requetes recues</button>
+          <button :class="{ active: tab === 'sent' }" @click="tab = 'sent'">Mes demandes</button>
+        </div>
+
+        <div v-if="loading" class="text-center my-5">
+          <div class="spinner-border" role="status"></div>
+        </div>
+
+        <div v-else-if="tab === 'received'" class="requests-list">
+          <div v-if="!received.length" class="empty-state">Aucune requete recue</div>
+          <div v-for="req in received" :key="req.id" class="request-card">
+            <div class="request-info">
+              <div class="request-user">{{ req.userName }}</div>
+              <div class="request-project">Projet: {{ req.workspaceName }}</div>
+            </div>
+            <div class="request-actions">
+              <button class="btn-approve" @click="approve(req)">Approuver</button>
+              <button class="btn-reject" @click="reject(req)">Rejeter</button>
+            </div>
+          </div>
+        </div>
+
+        <div v-else class="requests-list">
+          <div v-if="!sent.length" class="empty-state">Aucune demande envoyee</div>
+          <div v-for="req in sent" :key="req.id" class="request-card">
+            <div class="request-info">
+              <div class="request-project">Projet: {{ req.workspaceName }}</div>
+              <div class="request-status" :class="req.status">{{ req.status }}</div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      new Vue({
+        el: "#app",
+        data: {
+          tab: "received",
+          loading: true,
+          received: [],
+          sent: [],
+          session: null,
+          ownedWorkspaces: [],
+        },
+        async mounted() {
+          this.session = (await window.electronAPI.checkSession()) || { loggedIn: false };
+          await this.loadRequests();
+        },
+        methods: {
+          async loadRequests() {
+            this.loading = true;
+            const userId = this.session.loggedIn && this.session.user ? this.session.user.id : null;
+            if (!userId) { this.loading = false; return; }
+            try {
+              const [allWs, myRequests] = await Promise.all([
+                window.electronAPI.getWorkspaces(),
+                window.electronAPI.getMyJoinRequests(userId),
+              ]);
+              this.sent = (myRequests || []).map(r => ({
+                ...r,
+                workspaceName: (allWs.find(w => w.id === r.workspaceId) || {}).name || r.workspaceName,
+              }));
+              const ownWsIds = (allWs || []).filter(w => w.ownerId === userId).map(w => w.id);
+              const receivedAll = [];
+              for (const wsId of ownWsIds) {
+                try {
+                  const reqs = await window.electronAPI.getJoinRequests(wsId, userId);
+                  const wsName = (allWs.find(w => w.id === wsId) || {}).name || "Inconnu";
+                  (reqs || []).forEach(r => receivedAll.push({ ...r, workspaceName: wsName }));
+                } catch {}
+              }
+              this.received = receivedAll;
+            } catch (e) {
+              console.error(e);
+            } finally {
+              this.loading = false;
+            }
+          },
+          async approve(req) {
+            const userId = this.session.user.id;
+            try {
+              const result = await window.electronAPI.approveJoinRequest(req.id, userId);
+              if (result && result.success) {
+                this.received = this.received.filter(r => r.id !== req.id);
+              }
+            } catch (e) {
+              console.error(e);
+            }
+          },
+          async reject(req) {
+            const userId = this.session.user.id;
+            try {
+              const result = await window.electronAPI.rejectJoinRequest(req.id, userId);
+              if (result && result.success) {
+                this.received = this.received.filter(r => r.id !== req.id);
+              }
+            } catch (e) {
+              console.error(e);
+            }
+          },
+        },
+      });
+    </script>
+    <style>
+      .requests-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 24px;
+      }
+      .requests-tabs button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        background: #f4f5f8;
+        color: #1d2340;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+      }
+      .requests-tabs button.active {
+        background: #ff9838;
+        color: white;
+      }
+      .requests-list {
+        max-width: 700px;
+      }
+      .request-card {
+        background: white;
+        border-radius: 14px;
+        padding: 18px 22px;
+        margin-bottom: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      }
+      .request-user {
+        font-weight: 600;
+        font-size: 15px;
+        color: #1d2340;
+      }
+      .request-project {
+        font-size: 13px;
+        color: #7b7d85;
+        margin-top: 2px;
+      }
+      .request-status {
+        font-size: 13px;
+        font-weight: 600;
+        padding: 4px 12px;
+        border-radius: 999px;
+      }
+      .request-status.pending { background: #fff0dd; color: #ff9838; }
+      .request-status.approved { background: #e8faf5; color: #2ecc71; }
+      .request-status.rejected { background: #fde8e8; color: #e74c3c; }
+      .request-actions { display: flex; gap: 8px; }
+      .btn-approve {
+        background: #ff9838;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .btn-reject {
+        background: #fee2e2;
+        color: #dc2626;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 16px;
+        font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
+      }
+      .empty-state {
+        background: white;
+        border-radius: 14px;
+        padding: 40px;
+        text-align: center;
+        color: #7b7d85;
+        font-size: 15px;
+      }
+    </style>
+  </body>
+</html>

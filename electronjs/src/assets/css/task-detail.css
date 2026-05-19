@@ -46,11 +46,35 @@
   font-weight: 700;
 }
 
-.task-article h1 {
+.task-title-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+
+.task-title-row h1 {
   color: #1d2340;
   font-size: 34px;
   line-height: 1.2;
-  margin-bottom: 18px;
+  margin: 0;
+}
+
+.delete-task-btn {
+  background: #fee2e2;
+  color: #dc2626;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.delete-task-btn:hover {
+  background: #fecaca;
 }
 
 .task-author {

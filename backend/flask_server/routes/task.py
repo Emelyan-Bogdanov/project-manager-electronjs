@@ -138,3 +138,30 @@ def update_task(task_id):
 
     task = Task.update_task(task_id, **data)
     return jsonify(task_to_dict(task))
+
+@task_bp.route("/task/<int:task_id>", methods=["DELETE"])
+def delete_task(task_id):
+    data = request.json or {}
+    user_id = data.get("userId")
+    task = Task.query.get(task_id)
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
+    if not user_id or task.authorId != user_id:
+        return jsonify({"error": "Vous n'etes pas autorise a supprimer cette tache"}), 403
+
+    old_images = parse_json_field(task.images)
+    images_folder = current_app.config["IMAGES_FOLDER"]
+    for img in old_images:
+        if isinstance(img, dict):
+            fname = img.get("filename", "")
+        elif isinstance(img, str):
+            fname = img.rsplit("/", 1)[-1]
+        else:
+            continue
+        if fname:
+            fpath = os.path.join(images_folder, fname)
+            if os.path.exists(fpath):
+                os.remove(fpath)
+
+    Task.delete_task(task_id)
+    return jsonify({"success": True, "message": "Task deleted"})

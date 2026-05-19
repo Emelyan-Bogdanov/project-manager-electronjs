@@ -15,6 +15,7 @@ Vue.component("task-slide-panel", {
       focusedBlock: null,
       titlePrompt: { visible: false, filePath: null, insertIdx: undefined, title: "" },
       saveError: "",
+      confirmDelete: false,
     };
   },
   watch: {
@@ -137,6 +138,20 @@ Vue.component("task-slide-panel", {
         this.saving = false;
       }
     },
+    async deleteTask() {
+      try {
+        const result = await window.electronAPI.deleteTask(this.task.id, this.session.user.id);
+        if (result && result.success) {
+          this.confirmDelete = false;
+          this.$emit("saved");
+          this.close();
+        } else {
+          console.error("Delete failed", result);
+        }
+      } catch (e) {
+        console.error(e);
+      }
+    },
     close() {
       this.$emit("close");
     },
@@ -159,6 +174,7 @@ Vue.component("task-slide-panel", {
             <button v-if="editing" class="slide-btn save-btn" @click="save" :disabled="saving">
               {{ saving ? 'Saving...' : 'Save' }}
             </button>
+            <button v-if="editing" class="slide-btn delete-btn" @click="confirmDelete = true">&times; Delete</button>
             <button class="slide-btn close-btn" @click="close">&times;</button>
           </div>
         </div>
@@ -268,6 +284,17 @@ Vue.component("task-slide-panel", {
         </div>
 
         <div v-else class="slide-empty">Task not found</div>
+      </div>
+
+      <div class="title-prompt-overlay" v-if="confirmDelete" @click.self="confirmDelete = false">
+        <div class="title-prompt-box">
+          <h4>Supprimer cette tache ?</h4>
+          <p style="color:#666;margin-bottom:16px">Cette action est irreversible.</p>
+          <div class="title-prompt-actions">
+            <button class="btn-cancel" @click="confirmDelete = false">Annuler</button>
+            <button class="btn-submit" style="background:#e74c3c" @click="deleteTask">Supprimer</button>
+          </div>
+        </div>
       </div>
 
       <div class="title-prompt-overlay" v-if="titlePrompt.visible" @click.self="titlePrompt.visible = false">

@@ -24,7 +24,7 @@
       <aside class="sidebar">
         <left-big-menu></left-big-menu>
       </aside>
-
+<!-- <h1>fffffffffffffffff</h1> -->
       <main class="main-content task-detail-page">
         <button class="back-button clicked" @click="goBack">
           <i class="bi bi-arrow-left"></i>
@@ -42,7 +42,10 @@
             <span>{{ task.status || "todo" }}</span>
           </div>
 
-          <h1>{{ task.title }}</h1>
+          <div class="task-title-row">
+            <h1>{{ task.title }}</h1>
+            <button v-if="isOwner" class="delete-task-btn" @click="confirmDelete = true">Supprimer</button>
+          </div>
 
           <div class="task-author">
             <img v-if="task.authorAvatar" :src="task.authorAvatar" alt="" />
@@ -91,6 +94,17 @@
 
         <div v-else class="empty-state">Tache introuvable</div>
       </main>
+
+      <div class="modal-overlay" v-if="confirmDelete" @click.self="confirmDelete = false">
+        <div class="modal-box" style="padding:24px;width:400px;background:white;border-radius:16px">
+          <h4>Supprimer cette tache ?</h4>
+          <p style="color:#666;margin:12px 0 20px">Cette action est irreversible.</p>
+          <div class="modal-actions">
+            <button class="btn-cancel" @click="confirmDelete = false">Annuler</button>
+            <button class="btn-submit" style="background:#e74c3c" @click="deleteTask">Supprimer</button>
+          </div>
+        </div>
+      </div>
     </div>
 
     <script>
@@ -99,6 +113,14 @@
         data: {
           task: null,
           loading: true,
+          session: null,
+          confirmDelete: false,
+        },
+        computed: {
+          isOwner() {
+            return this.session && this.session.loggedIn && this.session.user && this.task &&
+              this.session.user.id === this.task.authorId;
+          },
         },
         async mounted() {
           const id = new URLSearchParams(window.location.search).get("id");
@@ -107,7 +129,12 @@
             return;
           }
           try {
-            this.task = await window.electronAPI.getTask(Number(id));
+            const [task, session] = await Promise.all([
+              window.electronAPI.getTask(Number(id)),
+              window.electronAPI.checkSession(),
+            ]);
+            this.task = task;
+            this.session = session;
           } catch (e) {
             console.error(e);
           } finally {
@@ -125,6 +152,16 @@
               .slice(0, 2)
               .map((part) => part[0].toUpperCase())
               .join("");
+          },
+          async deleteTask() {
+            try {
+              const result = await window.electronAPI.deleteTask(this.task.id, this.session.user.id);
+              if (result && result.success) {
+                window.electronAPI.navigate("dashboard.html");
+              }
+            } catch (e) {
+              console.error(e);
+            }
           },
         },
       });

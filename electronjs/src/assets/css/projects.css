@@ -41,6 +41,10 @@
   font-weight: 700;
   margin: 0 0 6px;
   color: #1d2340;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  max-width: 100%;
 }
 
 .project-card-large .project-card-desc {
@@ -71,4 +75,43 @@
 
 .project-card-large .project-card-stats i {
   color: #ff9838;
+}
+
+.project-locked {
+  opacity: 0.75;
+  cursor: default;
+}
+
+.project-locked:hover {
+  border-color: transparent;
+  transform: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.project-card-actions {
+  padding-top: 12px;
+  border-top: 1px solid #f0f0f0;
+  margin-top: 12px;
+}
+
+.btn-join {
+  width: 100%;
+  padding: 8px;
+  border: none;
+  border-radius: 10px;
+  background: #ff9838;
+  color: white;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.btn-join:hover {
+  background: #e8892e;
+}
+
+.btn-join:disabled {
+  background: #ccc;
+  cursor: not-allowed;
 }

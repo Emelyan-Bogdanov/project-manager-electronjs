@@ -169,10 +169,7 @@
               .filter(Boolean);
           },
           profilePreview() {
-            return (
-              this.avatar ||
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(this.name || this.username || "User")}&background=f97316&color=fff`
-            );
+            return this.avatar || "";
           },
           subtitle() {
             return this.step === "account"
