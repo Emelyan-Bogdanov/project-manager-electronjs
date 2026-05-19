@@ -61,7 +61,7 @@
           </div>
 
           <section class="article-section">
-            <div class="article-content" v-html="task.description || 'Aucune description'"></div>
+            <div class="article-content" v-html="renderDescription"></div>
           </section>
 
           <section class="article-section" v-if="task.urls && task.urls.length">
@@ -95,6 +95,30 @@
         <div v-else class="empty-state">Tache introuvable</div>
       </main>
 
+          <section class="article-section">
+            <h3>Commentaires ({{ comments.length }})</h3>
+            <div class="task-comments">
+              <div v-for="c in comments" :key="c.id" class="comment-item">
+                <img v-if="c.userAvatar" :src="c.userAvatar" alt="" class="comment-avatar" />
+                <div v-else class="comment-avatar-placeholder">{{ initials(c.userName) }}</div>
+                <div class="comment-body">
+                  <strong>{{ c.userName }}</strong>
+                  <p>{{ c.text }}</p>
+                  <small>{{ c.created_at }}</small>
+                </div>
+              </div>
+              <div v-if="!comments.length" class="no-comments">Aucun commentaire</div>
+            </div>
+            <div class="comment-form" v-if="session && session.loggedIn">
+              <input v-model="newComment" placeholder="Ecrire un commentaire..." @keyup.enter="addComment" />
+              <button @click="addComment" :disabled="!newComment.trim()">Envoyer</button>
+            </div>
+          </section>
+        </article>
+
+        <div v-else class="empty-state">Tache introuvable</div>
+      </main>
+
       <div class="modal-overlay" v-if="confirmDelete" @click.self="confirmDelete = false">
         <div class="modal-box" style="padding:24px;width:400px;background:white;border-radius:16px">
           <h4>Supprimer cette tache ?</h4>
@@ -115,8 +139,26 @@
           loading: true,
           session: null,
           confirmDelete: false,
+          comments: [],
+          newComment: "",
+          viewIncremented: false,
         },
         computed: {
+          renderDescription() {
+            if (!this.task || !this.task.description) return 'Aucune description';
+            try {
+              const blocks = JSON.parse(this.task.description);
+              if (Array.isArray(blocks)) {
+                return blocks.map(b => {
+                  if (b.type === 'header') return `<h2>${b.content || ''}</h2>`;
+                  if (b.type === 'text') return b.content || '';
+                  if (b.type === 'image') return `<figure><img src="${b.src}" alt="${b.title || ''}" style="max-width:100%;border-radius:8px;" /><figcaption style="color:#7b7d85;font-size:13px;margin-top:4px;">${b.title || ''}</figcaption></figure>`;
+                  return '';
+                }).join('');
+              }
+            } catch {}
+            return this.task.description;
+          },
           isOwner() {
             return this.session && this.session.loggedIn && this.session.user && this.task &&
               this.session.user.id === this.task.authorId;
@@ -135,6 +177,11 @@
             ]);
             this.task = task;
             this.session = session;
+            if (task && !this.viewIncremented) {
+              window.electronAPI.incrementTaskView(task.id);
+              this.viewIncremented = true;
+            }
+            await this.loadComments(Number(id));
           } catch (e) {
             console.error(e);
           } finally {
@@ -152,6 +199,23 @@
               .slice(0, 2)
               .map((part) => part[0].toUpperCase())
               .join("");
+          },
+          async loadComments(taskId) {
+            try {
+              this.comments = await window.electronAPI.getTaskComments(taskId) || [];
+            } catch (e) {
+              console.error(e);
+              this.comments = [];
+            }
+          },
+          async addComment() {
+            const text = this.newComment.trim();
+            if (!text || !this.task) return;
+            const result = await window.electronAPI.addTaskComment(this.task.id, this.session.user.id, text);
+            if (result && result.success) {
+              this.newComment = "";
+              await this.loadComments(this.task.id);
+            }
           },
           async deleteTask() {
             try {

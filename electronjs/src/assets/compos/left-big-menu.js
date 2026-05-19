@@ -9,18 +9,34 @@ Vue.component("left-big-menu", {
   data: function () {
     return {
       members: [],
+      hasProjects: false,
     };
   },
   async mounted() {
     try {
-      const users = await window.electronAPI.getUsers();
-      this.members = users.map(u => ({
-        id: u.id,
-        name: u.name || u.username,
-        url: u.avatar || "",
-      }));
+      const session = await window.electronAPI.checkSession();
+      const userId = session.loggedIn && session.user ? session.user.id : null;
+      if (userId) {
+        const myWs = await window.electronAPI.getMyWorkspaces(userId) || [];
+        this.hasProjects = myWs.length > 0;
+
+        const memberMap = {};
+        for (const ws of myWs) {
+          const wsMembers = await window.electronAPI.getWorkspaceMembers(ws.id) || [];
+          wsMembers.forEach(m => {
+            if (m.id !== userId) {
+              memberMap[m.id] = m;
+            }
+          });
+        }
+        this.members = Object.values(memberMap).map(m => ({
+          id: m.id,
+          name: m.name,
+          url: m.avatar || "",
+        }));
+      }
     } catch (e) {
-      console.error("Error loading sidebar members:", e);
+      console.error("Error loading sidebar:", e);
     }
   },
   methods: {
@@ -45,7 +61,7 @@ Vue.component("left-big-menu", {
         url="dashboard.html"
       ></side-menu-button>
 
-      <side-menu-button
+      <side-menu-button v-if="hasProjects"
         biclass="bi-check2-square"
         span-text="Tâches"
         url="tasks.html"
@@ -83,6 +99,12 @@ Vue.component("left-big-menu", {
           span-text="Profil"
           url="profile.html"
         ></side-menu-button>
+
+        <side-menu-button
+          biclass="bi-gear"
+          span-text="Config"
+          url="config.html"
+        ></side-menu-button>
       </div>
 
       <sidebar-section-header title="Membres de projet"></sidebar-section-header>
@@ -94,6 +116,9 @@ Vue.component("left-big-menu", {
           :url="m.url"
           :name="m.name"
         ></sidebar-member-item>
+        <div v-if="!members.length" style="color:rgba(255,255,255,0.4);font-size:12px;padding:8px 16px;text-align:center;">
+          Aucun membre
+        </div>
       </div>
 
       <div class="sidebar-logout" style="margin-top: auto; padding-top: 16px; border-top: 1px solid rgba(255,255,255,0.08);">

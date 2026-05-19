@@ -31,9 +31,24 @@ def create_app() :
             db.session.commit()
         except Exception:
             db.session.rollback()
+        try:
+            db.session.execute(text("ALTER TABLE workspace_members ADD COLUMN joined_at VARCHAR(30) DEFAULT ''"))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+        try:
+            db.session.execute(text("ALTER TABLE task ADD COLUMN views INTEGER DEFAULT 0"))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
+        try:
+            db.session.execute(text("ALTER TABLE task ADD COLUMN comments INTEGER DEFAULT 0"))
+            db.session.commit()
+        except Exception:
+            db.session.rollback()
         # seed_database(db)
 
-    from .routes import message_bp, workspace_bp, task_bp, users_bp, files_bp, images_bp
+    from .routes import message_bp, workspace_bp, task_bp, users_bp, files_bp, images_bp, comments_bp
 
     app.register_blueprint(message_bp)
     app.register_blueprint(workspace_bp)
@@ -41,5 +56,6 @@ def create_app() :
     app.register_blueprint(users_bp)
     app.register_blueprint(files_bp)
     app.register_blueprint(images_bp)
+    app.register_blueprint(comments_bp)
 
     return app

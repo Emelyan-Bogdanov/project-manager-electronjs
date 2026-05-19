@@ -113,6 +113,26 @@ def update_user(user_id):
         db.session.rollback()
         return jsonify({"success": False, "error": str(e)}), 400
 
+@users_bp.route("/api/users/<int:user_id>/stats")
+def user_stats(user_id):
+    from ..modules import Workspace, Task, FileEntry, WorkspaceMember
+    ws_as_owner = Workspace.query.filter_by(ownerId=user_id).count()
+    member_rows = WorkspaceMember.query.filter_by(userId=user_id).all()
+    ws_ids = [r.workspaceId for r in member_rows]
+    ws_joined = len(ws_ids)
+    tasks_created = Task.query.filter_by(authorId=user_id).count()
+    files_uploaded = FileEntry.query.filter_by(uploaded_by=user_id).count()
+    ws_with_tasks = set(t.workspaceId for t in Task.query.filter(Task.authorId == user_id, Task.workspaceId.isnot(None)).all())
+    avg_tasks = round(tasks_created / len(ws_with_tasks), 1) if ws_with_tasks else 0
+    return jsonify({
+        "projectsCreated": ws_as_owner,
+        "projectsJoined": ws_joined,
+        "tasksCreated": tasks_created,
+        "avgTasksPerProject": avg_tasks,
+        "filesUploaded": files_uploaded,
+        "totalProjects": len(set(list(ws_with_tasks) + [r.workspaceId for r in WorkspaceMember.query.filter_by(userId=user_id).all()]))
+    })
+
 @users_bp.route("/api/login", methods=["POST"])
 def login():
     data = request.json or {}

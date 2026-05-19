@@ -16,7 +16,17 @@ Vue.component("task-slide-panel", {
       titlePrompt: { visible: false, filePath: null, insertIdx: undefined, title: "" },
       saveError: "",
       confirmDelete: false,
+      comments: [],
+      newComment: "",
+      viewIncremented: false,
+      showMoveMenu: false,
     };
+  },
+  mounted() {
+    document.addEventListener('click', this.onDocClick);
+  },
+  beforeDestroy() {
+    document.removeEventListener('click', this.onDocClick);
   },
   watch: {
     taskId(n) {
@@ -58,15 +68,39 @@ Vue.component("task-slide-panel", {
           session.user.id === task.authorId;
         this.parseBlocks(task.description || "");
         if (task.images && task.images.length) {
-          task.images.forEach((src) => {
-            this.blocks.push({ type: "image", src, title: "" });
+          task.images.forEach((img) => {
+            const src = typeof img === "string" ? img : (img.url || img.src || "");
+            this.blocks.push({ type: "image", src, title: img.title || "" });
           });
         }
+        if (task && !this.viewIncremented) {
+          window.electronAPI.incrementTaskView(id);
+          this.viewIncremented = true;
+        }
+        await this.loadComments(id);
       } catch (e) {
         console.error(e);
         this.task = null;
       } finally {
         this.loading = false;
+      }
+    },
+    async loadComments(taskId) {
+      try {
+        this.comments = await window.electronAPI.getTaskComments(taskId) || [];
+      } catch (e) {
+        console.error(e);
+        this.comments = [];
+      }
+    },
+    async addComment() {
+      const text = this.newComment.trim();
+      if (!text || !this.task) return;
+      const result = await window.electronAPI.addTaskComment(this.task.id, this.session.user.id, text);
+      if (result && result.success) {
+        this.newComment = "";
+        await this.loadComments(this.task.id);
+        if (this.task) this.task.commentsCount = (this.task.commentsCount || 0) + 1;
       }
     },
     parseBlocks(desc) {
@@ -152,6 +186,11 @@ Vue.component("task-slide-panel", {
         console.error(e);
       }
     },
+    onDocClick(e) {
+      if (this.showMoveMenu && !this.$el.querySelector('.move-menu-wrap')?.contains(e.target)) {
+        this.showMoveMenu = false;
+      }
+    },
     close() {
       this.$emit("close");
     },
@@ -163,6 +202,20 @@ Vue.component("task-slide-panel", {
         .map((p) => p[0].toUpperCase())
         .join("");
     },
+    async moveTask(status) {
+      if (!this.task) return;
+      try {
+        await window.electronAPI.updateTask(this.task.id, { status });
+        this.task.status = status;
+        this.showMoveMenu = false;
+        this.$emit("saved");
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    filterByTag(tag) {
+      window.electronAPI.navigate("tasks.html?tag=" + encodeURIComponent(tag));
+    },
   },
   template: `
     <div class="task-slide-overlay" v-if="visible" @click.self="close">
@@ -171,6 +224,19 @@ Vue.component("task-slide-panel", {
           <h3>{{ task ? task.title : 'Loading...' }}</h3>
           <div class="slide-panel-actions">
             <span v-if="saveError" class="save-error">{{ saveError }}</span>
+            <div class="move-menu-wrap" v-if="editing" style="position:relative;">
+              <button class="slide-btn move-btn" @click.stop="showMoveMenu = !showMoveMenu">
+                <i class="bi bi-arrow-right"></i> Deplacer
+              </button>
+              <div v-if="showMoveMenu" class="move-dropdown" style="position:absolute;top:100%;right:0;background:white;border-radius:10px;box-shadow:0 8px 24px rgba(0,0,0,0.12);z-index:9999;min-width:160px;padding:6px;margin-top:4px;">
+                <button v-for="s in [{v:'todo',l:'A faire'},{v:'in_progress',l:'En cours'},{v:'done',l:'Termine'}]" :key="s.v"
+                  @click="moveTask(s.v)" :disabled="task.status === s.v"
+                  style="display:block;width:100%;padding:8px 14px;border:none;background:transparent;text-align:left;border-radius:6px;font-size:13px;cursor:pointer;color:#1d2340;">
+                  <i :class="'bi ' + (s.v === 'todo' ? 'bi-circle' : s.v === 'in_progress' ? 'bi-arrow-repeat' : 'bi-check-circle')" style="margin-right:8px;"></i>
+                  {{ s.l }}
+                </button>
+              </div>
+            </div>
             <button v-if="editing" class="slide-btn save-btn" @click="save" :disabled="saving">
               {{ saving ? 'Saving...' : 'Save' }}
             </button>
@@ -201,7 +267,7 @@ Vue.component("task-slide-panel", {
           </div>
 
           <div class="slide-tags" v-if="task.tags && task.tags.length">
-            <span v-for="t in task.tags" :key="t">{{ t }}</span>
+            <span v-for="t in task.tags" :key="t" class="clicked" @click.stop="filterByTag(t)">{{ t }}</span>
           </div>
 
           <div class="slide-blocks">
@@ -217,7 +283,7 @@ Vue.component("task-slide-panel", {
 
               <div v-if="block.type === 'header'" class="block block-header" :class="{ editing }">
                 <h2 v-if="!editing" v-html="block.content || 'Untitled'"></h2>
-                <h2 v-else contenteditable="true"
+                <h2 v-else contenteditable="true" dir="ltr"
                   @input="onBlockInput(idx, $event)"
                   @focus="focusedBlock = idx"
                   v-html="block.content"></h2>
@@ -231,7 +297,7 @@ Vue.component("task-slide-panel", {
                   <button @click="formatBlock('underline')" title="Underline"><u>U</u></button>
                 </div>
                 <div v-if="!editing" class="text-content" v-html="block.content || ''"></div>
-                <div v-else class="text-content editable" contenteditable="true"
+                <div v-else class="text-content editable" contenteditable="true" dir="ltr"
                   @input="onBlockInput(idx, $event)"
                   @focus="focusedBlock = idx"
                   v-html="block.content"></div>
@@ -280,6 +346,26 @@ Vue.component("task-slide-panel", {
                 <i class="bi bi-file-earmark-arrow-down"></i> {{ file.name }}
               </a>
             </template>
+          </div>
+
+          <div class="slide-comments">
+            <h4>Commentaires ({{ comments.length }})</h4>
+            <div class="comments-list">
+              <div v-for="c in comments" :key="c.id" class="comment-item">
+                <img v-if="c.userAvatar" :src="c.userAvatar" alt="" class="comment-avatar" />
+                <div v-else class="comment-avatar-placeholder">{{ initials(c.userName) }}</div>
+                <div class="comment-body">
+                  <strong>{{ c.userName }}</strong>
+                  <p>{{ c.text }}</p>
+                  <small>{{ c.created_at }}</small>
+                </div>
+              </div>
+              <div v-if="!comments.length" class="no-comments">Aucun commentaire</div>
+            </div>
+            <div class="comment-form" v-if="session && session.loggedIn">
+              <input v-model="newComment" placeholder="Ecrire un commentaire..." @keyup.enter="addComment" />
+              <button @click="addComment" :disabled="!newComment.trim()">Envoyer</button>
+            </div>
           </div>
         </div>
 

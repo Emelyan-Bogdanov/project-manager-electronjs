@@ -89,13 +89,23 @@
           </div>
         </div>
 
+        <div class="view-tabs" v-if="workspace">
+          <button :class="{ active: viewTab === 'tasks' }" @click="viewTab = 'tasks'">
+            <i class="bi bi-check2-square"></i> Taches
+          </button>
+          <button :class="{ active: viewTab === 'files' }" @click="switchToFiles">
+            <i class="bi bi-files"></i> Fichiers
+            <span v-if="files.length" class="tab-badge">{{ files.length }}</span>
+          </button>
+        </div>
+
         <div v-if="loading" class="text-center my-5">
           <div class="spinner-border" role="status">
             <span class="visually-hidden">Chargement...</span>
           </div>
         </div>
 
-        <div v-else-if="workspace" class="board">
+        <div v-else-if="workspace && viewTab === 'tasks'" class="board">
           <div class="board-column" v-for="col in columns" :key="col.name">
             <column-title :text="col.name" :count="col.tasks.length"></column-title>
 
@@ -112,7 +122,64 @@
               :author="task.author"
               :image="task.images && task.images[0] ? (task.images[0].url || task.images[0]) : ''"
               @select="openTask(task.id)"
+              @tag-click="filterByTag"
             ></project-card>
+          </div>
+        </div>
+
+        <div v-else-if="workspace && viewTab === 'files'" class="workspace-files">
+          <div class="files-stats-row">
+            <div class="file-stat-card">
+              <i class="bi bi-file-earmark"></i>
+              <div class="file-stat-num">{{ files.length }}</div>
+              <div class="file-stat-label">Fichiers</div>
+            </div>
+            <div class="file-stat-card">
+              <i class="bi bi-database"></i>
+              <div class="file-stat-num">{{ totalSizeFormatted }}</div>
+              <div class="file-stat-label">Taille totale</div>
+            </div>
+          </div>
+
+          <div class="upload-area clicked" @click="triggerFileUpload">
+            <i class="bi bi-cloud-arrow-up"></i>
+            <p>Cliquez pour uploader des fichiers</p>
+            <small style="color:#9ca3af;">Vous pouvez selectionner plusieurs fichiers</small>
+          </div>
+          <input type="file" id="wsFileInput" multiple @change="uploadFile" />
+
+          <div v-if="filesLoading" class="text-center my-4">
+            <div class="spinner-border" role="status"></div>
+          </div>
+
+          <div v-if="fileError" class="alert alert-danger">{{ fileError }}</div>
+
+          <div v-if="!filesLoading && files.length === 0" class="empty-state-files">
+            <i class="bi bi-folder2-open"></i>
+            <p>Aucun fichier dans ce projet</p>
+          </div>
+
+          <div v-if="!filesLoading && files.length">
+            <div class="file-card" v-for="f in files" :key="f.id">
+              <div class="file-icon">
+                <i :class="getFileIcon(f.mime_type)"></i>
+              </div>
+              <div class="file-info">
+                <div class="file-name">{{ f.original_name }}</div>
+                <div class="file-meta">
+                  {{ formatSize(f.size) }} &middot; {{ f.created_at }}
+                  &middot; {{ f.uploader_name || 'Inconnu' }}
+                </div>
+              </div>
+              <div class="file-actions">
+                <button class="file-btn download" @click="downloadFile(f)" title="Telecharger">
+                  <i class="bi bi-download"></i>
+                </button>
+                <button v-if="f.uploaded_by === currentUserId" class="file-btn delete" @click="removeFile(f.id)" title="Supprimer">
+                  <i class="bi bi-trash"></i>
+                </button>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -149,7 +216,7 @@
               <div
                 ref="descriptionEditor"
                 class="rich-editor"
-                contenteditable="true"
+                contenteditable="true" dir="ltr"
                 @input="syncDescription"
               ></div>
             </div>
@@ -375,6 +442,122 @@
         font-weight: 600;
         cursor: pointer;
       }
+
+      .view-tabs {
+        display: flex;
+        gap: 8px;
+        margin-bottom: 20px;
+      }
+      .view-tabs button {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 10px;
+        background: #f4f5f8;
+        color: #1d2340;
+        font-weight: 600;
+        font-size: 14px;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .view-tabs button.active {
+        background: #ff9838;
+        color: white;
+      }
+      .tab-badge {
+        background: rgba(255,255,255,0.3);
+        padding: 0 8px;
+        border-radius: 999px;
+        font-size: 12px;
+      }
+      .view-tabs button.active .tab-badge {
+        background: rgba(255,255,255,0.3);
+      }
+      .workspace-files {
+        max-width: 800px;
+      }
+      .files-stats-row {
+        display: flex;
+        gap: 16px;
+        margin-bottom: 20px;
+      }
+      .file-stat-card {
+        flex: 1;
+        background: white;
+        border-radius: 14px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+      }
+      .file-stat-card i {
+        font-size: 28px;
+        color: #ff9838;
+        margin-bottom: 8px;
+      }
+      .file-stat-num {
+        font-size: 24px;
+        font-weight: 700;
+        color: #1d2340;
+      }
+      .file-stat-label {
+        font-size: 13px;
+        color: #7b7d85;
+        margin-top: 4px;
+      }
+      .empty-state-files {
+        text-align: center;
+        padding: 60px 20px;
+        color: #7b7d85;
+      }
+      .empty-state-files i {
+        font-size: 48px;
+        margin-bottom: 16px;
+      }
+      #wsFileInput { display: none; }
+      .workspace-files .file-card {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        background: white;
+        border-radius: 14px;
+        padding: 16px 20px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        border: 1px solid #f0f0f0;
+        transition: 0.2s;
+      }
+      .workspace-files .file-card:hover {
+        border-color: #ff9838;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+      }
+      .workspace-files .file-icon {
+        width: 44px; height: 44px; border-radius: 10px;
+        background: #fff0dd; display: flex; align-items: center;
+        justify-content: center; font-size: 20px; color: #ff9838; flex-shrink: 0;
+      }
+      .workspace-files .file-info { flex: 1; min-width: 0; }
+      .workspace-files .file-name {
+        font-weight: 600; font-size: 14px;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+      }
+      .workspace-files .file-meta { font-size: 12px; color: #7b7d85; margin-top: 2px; }
+      .workspace-files .file-actions { display: flex; gap: 6px; flex-shrink: 0; }
+      .workspace-files .file-btn {
+        width: 36px; height: 36px; border: none; border-radius: 8px;
+        background: #f5f5f5; color: #7b7d85; font-size: 16px;
+        cursor: pointer; display: flex; align-items: center; justify-content: center;
+      }
+      .workspace-files .file-btn.download:hover { background: #fff0dd; color: #ff9838; }
+      .workspace-files .file-btn.delete:hover { background: #fde8e8; color: #e74c3c; }
+      .workspace-files .upload-area {
+        border: 2px dashed #ddd; border-radius: 16px; padding: 30px;
+        text-align: center; background: white; cursor: pointer;
+        transition: 0.2s; margin-bottom: 20px;
+      }
+      .workspace-files .upload-area:hover { border-color: #ff9838; background: #fffaf5; }
+      .workspace-files .upload-area i { font-size: 36px; color: #ff9838; margin-bottom: 8px; }
+      .workspace-files .upload-area p { color: #7b7d85; margin: 0; font-size: 14px; }
     </style>
 
     <script>
@@ -411,6 +594,11 @@
           showAddMember: false,
           newMemberId: "",
           allUsers: [],
+          viewTab: "tasks",
+          files: [],
+          filesLoading: false,
+          fileError: "",
+          currentUserId: 0,
         },
         computed: {
           columns() {
@@ -433,6 +621,14 @@
             const memberIds = new Set(this.members.map(m => m.id));
             return (this.allUsers || []).filter(u => !memberIds.has(u.id));
           },
+          totalSizeFormatted() {
+            const total = this.files.reduce((s, f) => s + (f.size || 0), 0);
+            if (!total) return "0 B";
+            const k = 1024;
+            const sizes = ["B", "KB", "MB", "GB"];
+            const i = Math.floor(Math.log(total) / Math.log(k));
+            return parseFloat((total / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
+          },
         },
         async mounted() {
           const params = new URLSearchParams(window.location.search);
@@ -441,6 +637,7 @@
             this.workspaceId = Number(id);
             this.session = (await window.electronAPI.checkSession()) || { loggedIn: false };
             if (this.session.loggedIn) {
+              this.currentUserId = this.session.user.id;
               this.allUsers = (await window.electronAPI.getUsers()) || [];
             }
             await Promise.all([this.fetchWorkspace(), this.fetchTasks()]);
@@ -454,6 +651,7 @@
             }
           }
           this.loading = false;
+          await this.fetchFiles();
         },
         methods: {
           async fetchWorkspace() {
@@ -468,7 +666,12 @@
           },
           async fetchTasks() {
             try {
-              this.tasks = await window.electronAPI.getWorkspaceTasks(this.workspaceId);
+              const data = await window.electronAPI.getWorkspaceTasks(this.workspaceId);
+              this.tasks = data.map(t => ({
+                ...t,
+                commentsCount: t.comments || 0,
+                views: t.views || 0,
+              }));
             } catch (e) {
               console.error(e);
             }
@@ -592,10 +795,99 @@
               this.showTaskPanel = true;
             }
           },
-          plainText(html) {
+          plainText(desc) {
+            if (!desc) return "";
+            try {
+              const blocks = JSON.parse(desc);
+              if (Array.isArray(blocks)) {
+                return blocks.map(b => {
+                  if (b.type === "text") {
+                    const div = document.createElement("div");
+                    div.innerHTML = b.content || "";
+                    return div.textContent || "";
+                  }
+                  if (b.type === "header") return b.content || "";
+                  return "";
+                }).filter(Boolean).join(" - ");
+              }
+            } catch {}
             const div = document.createElement("div");
-            div.innerHTML = html || "";
+            div.innerHTML = desc;
             return div.textContent || div.innerText || "";
+          },
+          async fetchFiles() {
+            this.filesLoading = true;
+            try {
+              this.files = await window.electronAPI.getWorkspaceFiles(this.workspaceId) || [];
+            } catch (e) {
+              console.error(e);
+            } finally {
+              this.filesLoading = false;
+            }
+          },
+          switchToFiles() {
+            this.viewTab = "files";
+            this.fetchFiles();
+          },
+          triggerFileUpload() {
+            document.getElementById("wsFileInput").click();
+          },
+          async uploadFile(e) {
+            const input = e.target;
+            if (!input.files.length) return;
+            this.fileError = "";
+            try {
+              const formData = new FormData();
+              for (const file of input.files) {
+                formData.append("file", file);
+              }
+              formData.append("uploaded_by", String(this.currentUserId));
+              formData.append("workspaceId", String(this.workspaceId));
+              const res = await fetch("http://localhost:5000/api/files/upload", {
+                method: "POST",
+                body: formData,
+              });
+              if (!res.ok) throw new Error("Upload failed");
+              await this.fetchFiles();
+            } catch (e) {
+              this.fileError = "Erreur lors de l'upload: " + e.message;
+            } finally {
+              input.value = "";
+            }
+          },
+          downloadFile(f) {
+            const a = document.createElement("a");
+            a.href = "http://localhost:5000/api/files/" + f.id + "/download";
+            a.download = f.original_name;
+            a.click();
+          },
+          async removeFile(id) {
+            try {
+              await window.electronAPI.deleteFile(id);
+              this.files = this.files.filter(f => f.id !== id);
+            } catch (e) {
+              this.fileError = "Erreur lors de la suppression";
+            }
+          },
+          getFileIcon(mime) {
+            if (!mime) return "bi-file-earmark";
+            if (mime.startsWith("image/")) return "bi-file-earmark-image";
+            if (mime.startsWith("video/")) return "bi-file-earmark-play";
+            if (mime.startsWith("audio/")) return "bi-file-earmark-music";
+            if (mime.includes("pdf")) return "bi-file-earmark-pdf";
+            if (mime.includes("zip") || mime.includes("rar")) return "bi-file-earmark-zip";
+            if (mime.includes("text") || mime.includes("document")) return "bi-file-earmark-text";
+            return "bi-file-earmark";
+          },
+          filterByTag(tag) {
+            window.electronAPI.navigate("tasks.html?tag=" + encodeURIComponent(tag));
+          },
+          formatSize(bytes) {
+            if (!bytes) return "0 B";
+            const k = 1024;
+            const sizes = ["B", "KB", "MB", "GB"];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + " " + sizes[i];
           },
         },
       });

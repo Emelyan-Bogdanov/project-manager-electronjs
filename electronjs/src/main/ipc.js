@@ -100,6 +100,11 @@ ipcMain.handle('get-files', async () => {
     catch (e) { console.error(e); return []; }
 });
 
+ipcMain.handle('get-workspace-files', async (event, workspaceId) => {
+    try { return await apiFetch(`/api/workspaces/${workspaceId}/files`); }
+    catch (e) { console.error(e); return []; }
+});
+
 ipcMain.handle('delete-file', async (event, fileId) => {
     try {
         return await apiFetch(`/api/files/${fileId}/delete`, { method: 'DELETE' });
@@ -254,6 +259,61 @@ ipcMain.handle('reject-join-request', async (event, requestId, userId) => {
 ipcMain.handle('get-my-join-requests', async (event, userId) => {
     try { return await apiFetch(`/api/users/${userId}/join-requests`); }
     catch (e) { console.error(e); return []; }
+});
+
+// ── Comments ──
+
+ipcMain.handle('get-task-comments', async (event, taskId) => {
+    try { return await apiFetch(`/api/tasks/${taskId}/comments`); }
+    catch (e) { console.error(e); return []; }
+});
+
+ipcMain.handle('add-task-comment', async (event, taskId, userId, text) => {
+    try {
+        return await apiFetch(`/api/tasks/${taskId}/comments`, {
+            method: 'POST',
+            body: JSON.stringify({ userId, text }),
+        });
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});
+
+ipcMain.handle('increment-task-view', async (event, taskId) => {
+    try {
+        return await apiFetch(`/api/tasks/${taskId}/view`, { method: 'POST' });
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
+});
+
+// ── User Stats ──
+
+ipcMain.handle('get-user-stats', async (event, userId) => {
+    try { return await apiFetch(`/api/users/${userId}/stats`); }
+    catch (e) { console.error(e); return null; }
+});
+
+// ── Config ──
+
+const CONFIG_FILE = path.join(app.getPath('userData'), 'config.json');
+
+ipcMain.handle('get-config', () => {
+    try {
+        const raw = fs.readFileSync(CONFIG_FILE, 'utf8');
+        return JSON.parse(raw);
+    } catch {
+        return { serverUrl: FLASK_BASE_URL };
+    }
+});
+
+ipcMain.handle('save-config', async (event, config) => {
+    try {
+        fs.writeFileSync(CONFIG_FILE, JSON.stringify(config));
+        return { success: true };
+    } catch (e) {
+        return { success: false, error: e.message };
+    }
 });
 
 // ── Image Storage (handled via direct fetch in renderer) ──

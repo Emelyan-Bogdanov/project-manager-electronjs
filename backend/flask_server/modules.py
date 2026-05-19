@@ -78,13 +78,15 @@ class WorkspaceMember(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     workspaceId = db.Column(db.Integer, nullable=False)
     userId = db.Column(db.Integer, nullable=False)
+    joined_at = db.Column(db.String(30), default="")
 
     @staticmethod
     def add_member(workspaceId, userId):
+        from datetime import datetime
         existing = WorkspaceMember.query.filter_by(workspaceId=workspaceId, userId=userId).first()
         if existing:
             return existing
-        m = WorkspaceMember(workspaceId=workspaceId, userId=userId)
+        m = WorkspaceMember(workspaceId=workspaceId, userId=userId, joined_at=datetime.now().isoformat())
         db.session.add(m)
         db.session.commit()
         return m
@@ -208,15 +210,23 @@ class Task(db.Model) :
 
 
 class Comment(db.Model):
+    __tablename__ = "comments"
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.Text,nullable=False)
-    
+    taskId = db.Column(db.Integer, nullable=False)
+    userId = db.Column(db.Integer, nullable=False)
+    text = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.String(30), default="")
+
     @staticmethod
-    def create_synthetic(db,count=5):
-        import random
-        for i in range(count):
-            db.session.add(Comment(text=f"text_blablabla_{random.randint(666,5955)}"))
-            db.session.commit()
+    def add(taskId, userId, text):
+        from datetime import datetime
+        c = Comment(taskId=taskId, userId=userId, text=text, created_at=datetime.now().isoformat())
+        db.session.add(c)
+        task = Task.query.get(taskId)
+        if task:
+            task.comments = (task.comments or 0) + 1
+        db.session.commit()
+        return c
 
 class Message(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -246,6 +256,7 @@ class FileEntry(db.Model):
     size = db.Column(db.Integer, default=0)
     mime_type = db.Column(db.String(100), default="")
     uploaded_by = db.Column(db.Integer, default=0)
+    workspaceId = db.Column(db.Integer, default=None)
     created_at = db.Column(db.String(70), default="")
 
 

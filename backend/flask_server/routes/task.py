@@ -33,6 +33,8 @@ def task_to_dict(task):
         "authorName": (author.name or author.username) if author else "Utilisateur",
         "authorUsername": author.username if author else "",
         "authorAvatar": author.avatar if author else "",
+        "views": task.views or 0,
+        "comments": task.comments or 0,
         "status": task.status,
         "priority": task.priority,
         "workspaceId": task.workspaceId,
@@ -104,6 +106,22 @@ def task_info(task_id):
     if not task:
         return jsonify({"error": "Task not found"}), 404
     return jsonify(task_to_dict(task))
+
+@task_bp.route("/api/tasks/<int:task_id>/view", methods=["POST"])
+def increment_view(task_id):
+    task = Task.query.get(task_id)
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
+    task.views = (task.views or 0) + 1
+    db.session.commit()
+    return jsonify({"success": True, "views": task.views})
+
+@task_bp.route("/api/tasks/<int:task_id>/comments/count", methods=["GET"])
+def task_comment_count(task_id):
+    task = Task.query.get(task_id)
+    if not task:
+        return jsonify({"error": "Task not found"}), 404
+    return jsonify({"comments": task.comments or 0, "views": task.views or 0})
 
 @task_bp.route("/task/<int:task_id>", methods=["PATCH"])
 def update_task(task_id):

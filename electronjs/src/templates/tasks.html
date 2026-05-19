@@ -97,6 +97,7 @@
               :author="task.author"
               :image="task.image"
               @select="openTask(task.id)"
+              @tag-click="filterByTag"
             ></project-card>
           </div>
         </div>
@@ -130,7 +131,7 @@
               <div
                 ref="descriptionEditor"
                 class="rich-editor"
-                contenteditable="true"
+                contenteditable="true" dir="ltr"
                 @input="syncDescription"
               ></div>
             </div>
@@ -287,9 +288,15 @@
             }));
           },
         },
-        async mounted() {
-          await Promise.all([this.fetchTasks(), this.fetchUsers(), this.fetchWorkspaces()]);
-        },
+          async mounted() {
+            await Promise.all([this.fetchTasks(), this.fetchUsers(), this.fetchWorkspaces()]);
+            const params = new URLSearchParams(window.location.search);
+            const tag = params.get("tag");
+            if (tag) {
+              this.selectedTag = tag;
+              this.showFilters = true;
+            }
+          },
         methods: {
           async fetchTasks() {
             try {
@@ -401,9 +408,24 @@
               this.showTaskPanel = true;
             }
           },
-          plainText(html) {
+          plainText(desc) {
+            if (!desc) return "";
+            try {
+              const blocks = JSON.parse(desc);
+              if (Array.isArray(blocks)) {
+                return blocks.map(b => {
+                  if (b.type === "text") {
+                    const div = document.createElement("div");
+                    div.innerHTML = b.content || "";
+                    return div.textContent || "";
+                  }
+                  if (b.type === "header") return b.content || "";
+                  return "";
+                }).filter(Boolean).join(" - ");
+              }
+            } catch {}
             const div = document.createElement("div");
-            div.innerHTML = html || "";
+            div.innerHTML = desc;
             return div.textContent || div.innerText || "";
           },
           clearFilters() {
@@ -417,6 +439,9 @@
             else this.sortOrder = "";
           },
           toggleView() { console.log("Changer de vue"); },
+          filterByTag(tag) {
+            window.electronAPI.navigate("tasks.html?tag=" + encodeURIComponent(tag));
+          },
         },
       });
     </script>

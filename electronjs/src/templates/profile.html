@@ -19,7 +19,7 @@
         <left-big-menu></left-big-menu>
       </aside>
 
-      <main class="main-content" style="background: #f5f6fa;">
+      <main class="main-content profile-page-wrap">
         <button onclick="window.history.back()" class="gohome btn custom-orange d-flex align-items-center justify-content-center shadow-lg clicked">
           <i class="bi bi-arrow-left me-2"></i> Retour
         </button>
@@ -29,19 +29,24 @@
             <div class="profile-cover"></div>
             <div class="profile-info-row">
               <div class="avatar-wrapper">
-                <img :src="user.avatar || getAvatarUrl(user.name || user.username)" alt="" class="profile-avatar" />
+                <div class="avatar-ring">
+                  <img :src="user.avatar || '../assets/imgs/default-profile.png'" alt="" class="profile-avatar" />
+                </div>
                 <label v-if="editing" class="avatar-edit-overlay" title="Changer la photo">
                   <i class="bi bi-camera"></i>
                   <input type="file" accept="image/*" @change="handleAvatarChange" class="avatar-input" />
                 </label>
+                <div class="avatar-status" :class="{ online: true }"></div>
               </div>
               <div class="profile-details">
                 <h1 v-if="!editing" class="profile-name">{{ user.name || user.username }}</h1>
                 <input v-else class="profile-name-input" v-model="form.name" placeholder="Nom" />
                 <p class="profile-role">{{ user.role || 'Membre' }}</p>
-                <p v-if="user.email && !editing" class="profile-location">
-                  <i class="bi bi-envelope"></i> {{ user.email }}
-                </p>
+                <div class="profile-meta">
+                  <span v-if="user.email"><i class="bi bi-envelope"></i> {{ user.email }}</span>
+                  <span v-if="user.location"><i class="bi bi-geo-alt"></i> {{ user.location }}</span>
+                  <span><i class="bi bi-calendar3"></i> Membre</span>
+                </div>
               </div>
               <button v-if="!editing && isOwnProfile" class="edit-profile-btn" @click="startEditing">
                 <i class="bi bi-pencil"></i> Modifier
@@ -49,22 +54,62 @@
             </div>
           </div>
 
+          <div class="profile-stats-row" v-if="stats">
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#e8f4fd;color:#3498db;">
+                <i class="bi bi-folder"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-num">{{ stats.projectsCreated }}</span>
+                <span class="stat-label">Projets crees</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#fef3e2;color:#ff9838;">
+                <i class="bi bi-check2-square"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-num">{{ stats.tasksCreated }}</span>
+                <span class="stat-label">Taches creees</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#e8faf5;color:#22c55e;">
+                <i class="bi bi-bar-chart"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-num">{{ stats.avgTasksPerProject }}</span>
+                <span class="stat-label">Moy. taches/projet</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#f4e8fd;color:#a855f7;">
+                <i class="bi bi-files"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-num">{{ stats.filesUploaded }}</span>
+                <span class="stat-label">Fichiers uploades</span>
+              </div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-icon" style="background:#fef3e2;color:#ff9838;">
+                <i class="bi bi-people"></i>
+              </div>
+              <div class="stat-info">
+                <span class="stat-num">{{ stats.projectsJoined }}</span>
+                <span class="stat-label">Projets rejoints</span>
+              </div>
+            </div>
+          </div>
+
           <div class="profile-body">
             <template v-if="!editing">
               <div class="profile-section">
-                <h5>Nom d'utilisateur</h5>
+                <h5><i class="bi bi-person-badge"></i> Nom d'utilisateur</h5>
                 <p>{{ user.username }}</p>
               </div>
-              <div class="profile-section" v-if="user.email">
-                <h5>Email</h5>
-                <p>{{ user.email }}</p>
-              </div>
-              <div class="profile-section" v-if="user.location">
-                <h5>Localisation</h5>
-                <p><i class="bi bi-geo-alt"></i> {{ user.location }}</p>
-              </div>
               <div class="profile-section" v-if="user.tags && user.tags.length">
-                <h5>Compétences</h5>
+                <h5><i class="bi bi-stars"></i> Competences</h5>
                 <div class="profile-tags">
                   <span v-for="t in user.tags" :key="t">{{ t }}</span>
                 </div>
@@ -85,9 +130,9 @@
                 <input class="form-control" v-model="form.location" placeholder="Ville, pays" />
               </div>
               <div class="profile-section">
-                <h5>Compétences</h5>
+                <h5>Competences</h5>
                 <input class="form-control" v-model="form.tagsInput" placeholder="ex: Python, Vue, Design" />
-                <small class="form-text text-muted">Séparées par des virgules</small>
+                <small class="form-text text-muted">Separees par des virgules</small>
                 <div class="profile-tags mt-2" v-if="form.tags.length">
                   <span v-for="(t, i) in form.tags" :key="i">{{ t }} <i class="bi bi-x" @click="removeTag(i)"></i></span>
                 </div>
@@ -129,6 +174,7 @@
           saving: false,
           saveError: "",
           isOwnProfile: false,
+          stats: null,
           form: {
             name: "",
             username: "",
@@ -142,22 +188,21 @@
         async mounted() {
           const params = new URLSearchParams(window.location.search);
           const userId = params.get("user");
+          const session = await window.electronAPI.checkSession();
           if (userId) {
             try {
               const users = await window.electronAPI.getUsers();
               const u = users.find(u => String(u.id) === userId);
               if (u) {
-                this.setUser(u, false);
+                const isOwn = session.loggedIn && session.user && String(session.user.id) === String(userId);
+                this.setUser(u, isOwn);
               }
             } catch (e) {
               console.error(e);
             }
-          } else {
-            const session = await window.electronAPI.checkSession();
-            if (session.loggedIn) {
-              const u = session.user;
-              this.setUser(u, true);
-            }
+          } else if (session.loggedIn) {
+            const u = session.user;
+            this.setUser(u, true);
           }
         },
         methods: {
@@ -175,6 +220,15 @@
             };
             this.isOwnProfile = isOwn;
             this.resetForm();
+            this.loadStats();
+          },
+          async loadStats() {
+            if (!this.user.id) return;
+            try {
+              this.stats = await window.electronAPI.getUserStats(this.user.id);
+            } catch (e) {
+              console.error(e);
+            }
           },
           resetForm() {
             this.form = {
@@ -240,7 +294,7 @@
             }
           },
           getAvatarUrl() {
-            return "";
+            return "../assets/imgs/default-profile.png";
           },
         },
       });

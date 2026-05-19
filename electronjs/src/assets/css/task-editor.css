@@ -256,6 +256,7 @@
   color: #343846;
   outline: none;
   min-height: 1.5em;
+  direction: ltr;
 }
 
 .text-content:empty:before {
@@ -478,6 +479,7 @@
 }
 
 .rich-editor {
+  direction: ltr;
   min-height: 140px;
   border: 1px solid #e0e0e0;
   border-radius: 0 0 8px 8px;
@@ -577,4 +579,109 @@
   font-weight: 600;
   display: flex;
   align-items: center;
+}
+
+/* ── Move Task Dropdown ── */
+.move-btn {
+  background: #eef6ff !important;
+  color: #236cae !important;
+}
+.move-btn:hover {
+  background: #dbeafe !important;
+}
+.move-dropdown button:disabled {
+  opacity: 0.4;
+  cursor: default !important;
+}
+.move-dropdown button:hover:not(:disabled) {
+  background: #f4f5f8;
+}
+
+/* ── Comments in Slide Panel ── */
+.slide-comments {
+  border-top: 1px solid #eceef3;
+  padding-top: 20px;
+  margin-top: 20px;
+}
+.slide-comments h4 {
+  font-size: 16px;
+  color: #1d2340;
+  margin-bottom: 14px;
+}
+.comments-list {
+  margin-bottom: 14px;
+}
+.comment-item {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.comment-avatar,
+.comment-avatar-placeholder {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.comment-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff2e8;
+  color: #c96917;
+  font-weight: 700;
+  font-size: 12px;
+}
+.comment-body {
+  background: #f4f5f8;
+  border-radius: 10px;
+  padding: 8px 12px;
+  flex: 1;
+}
+.comment-body strong {
+  font-size: 12px;
+  color: #1d2340;
+}
+.comment-body p {
+  margin: 3px 0 0;
+  font-size: 13px;
+  color: #343846;
+}
+.comment-body small {
+  font-size: 11px;
+  color: #9ca3af;
+}
+.no-comments {
+  color: #9ca3af;
+  font-size: 13px;
+  text-align: center;
+  padding: 16px;
+}
+.comment-form {
+  display: flex;
+  gap: 8px;
+}
+.comment-form input {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 13px;
+  outline: none;
+}
+.comment-form button {
+  background: #ff9838;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.comment-form button:disabled {
+  opacity: 0.5;
+  cursor: default;
 }

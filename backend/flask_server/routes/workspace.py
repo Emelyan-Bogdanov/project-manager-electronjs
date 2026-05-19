@@ -38,8 +38,12 @@ def add_workspace():
         data = request.json or {}
         if not data.get("name"):
             return jsonify({"error": "Le nom du projet est requis"}), 400
+        name = data.get("name").strip()
+        existing = Workspace.query.filter_by(name=name).first()
+        if existing:
+            return jsonify({"error": "Un projet avec ce nom existe deja"}), 409
         workspace = Workspace.add_workspace(
-            name=data.get("name"),
+            name=name,
             description=data.get("description"),
             iconPath=data.get("iconPath", "[NO IMAGE]"),
             ownerId=data.get("ownerId")

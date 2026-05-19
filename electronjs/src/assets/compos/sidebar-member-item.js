@@ -1,10 +1,9 @@
-// create the component
 Vue.component("sidebar-member-item", {
   name: "sidebar-member-item",
   props: {
     url : {
         type:String ,
-        default: "https://i.pravatar.cc/100?img=1"
+        default: ""
     },
     name:{
         type:String ,
@@ -12,17 +11,24 @@ Vue.component("sidebar-member-item", {
     },
     time : {
       type:String,
-      default:"[default value]" // hour:minute +  "for this week" , example : 08:06
+      default:"[default value]"
     }
   },
   data: function () {
-    // unlike app , the compo's data has to be a function
     return {};
   },
-  methods: {},
+  methods: {
+    getAvatarSrc(u) {
+      return u || "../assets/imgs/default-profile.svg";
+    },
+    initials(n) {
+      return (n || "U").split(" ").filter(Boolean).slice(0, 2).map(p => p[0].toUpperCase()).join("");
+    },
+  },
   template: `
     <div class="member-item">
-        <img :src='url' alt="" />
+        <img v-if="url" :src='url' alt="" />
+        <div v-else class="member-avatar-placeholder">{{ initials(name) }}</div>
         <div>
             <div class="member-name">{{name}}</div>
             <div class="member-time">{{time}}</div>

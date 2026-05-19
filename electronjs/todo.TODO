@@ -1,2 +1,10 @@
-- adjust the ui of 'create workspace' form
-- make the register page more desktopped , not vertical , so it would be horisontal
+- the 'deplacer vers une autre catégori' button is not working
+- when opening a project , the tasks ui compos , shows the '
+                [{"type":"text","content":"abcd@a"},{"type":"image","src":"http://localhost:5000/api/images/1747652442_icon.png","title":"test"}], instead of the text content
+- when viewing the profile of someone else, it shows the same as when viewing own profile , but with different data (just same ui)
+- the 'voir activity' shows he full activity of all users in a new vie , same as 'voir tout' in the section of members
+- add the error that shows if the project name is duplicated.
+- the dashboard kpis , contains also 'total tasks created by the current user', total tasks of all projects, total projects... and otehr kpi
+- while editing the text or adding a text block to the task, the text goes from right to left (inversed).
+- the task of a project , should contains the right numbers , of views & comments
+-[DO NOT DO] add light/dark time + 4 other themes.

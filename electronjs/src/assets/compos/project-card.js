@@ -46,7 +46,7 @@ Vue.component("project-card", {
               <img v-if="image" :src="image" class="task-card-image" alt="" />
 
               <div class="tags">
-                <span class="tag tag-orange" v-for="tag in tags">{{tag}}</span>
+                <span class="tag tag-orange clicked" v-for="tag in tags" @click.stop="$emit('tag-click', tag)">{{tag}}</span>
               </div>
 
               <button class="task-title task-title-button" @click.stop="$emit('select')">{{title}}</button>
